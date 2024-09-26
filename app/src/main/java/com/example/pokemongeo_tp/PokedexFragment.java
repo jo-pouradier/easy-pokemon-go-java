@@ -42,11 +42,13 @@ public class PokedexFragment extends Fragment {
         createPokemonList(binding);
         PokemonListAdapter adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonList.setAdapter(adapter);
-        return binding.getRoot(); }
+        return binding.getRoot();
+    }
 
     public void createPokemonList(PokedexFragmentBinding binding){
         // Ouverture du fichier res/raw
         InputStreamReader isr = new InputStreamReader(getResources().openRawResource(R.raw.poke));
+
         // Ouverture du fichier dans assets
         // InputStreamReader
         // isr =
@@ -68,14 +70,17 @@ public class PokedexFragment extends Fragment {
                 JSONObject object = array.getJSONObject(i);
                 String name = object.getString("name");
                 String image = object.getString("image");
-                String type1 = object.getString("type1");
-                String type2 = null;
+                POKEMON_TYPE type1 = POKEMON_TYPE.valueOf(object.getString("type1"));
+                POKEMON_TYPE type2 = null;
                 if (object.has("type2"))
-                    type2 = object.getString("type2");
+                    type2 = POKEMON_TYPE.valueOf(object.getString("type2"));
+                //TO DO FINISH HERE
+                int id = getResources().getIdentifier(image,
+                        "drawable",
+                        binding.getRoot().getContext().getPackageName());
+                Pokemon pokemon = new Pokemon(id, name, id, type1, type2); // Create Pokemon object
+                pokemonList.add(pokemon);
             }
-            //TO DO FINISH HERE
-            int id = getResources().getIdentifier("nomDuDrawableSansExtension","drawable", binding.getRoot().getContext().getPackageName());
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

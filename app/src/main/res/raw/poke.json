@@ -1,4 +1,165 @@
-[ {"name":"Bulbizarre", "image":"p1", "type1":"Plante", "type2":"Poison"},
-  {"name":"Herbizarre", "image":"p2", "type1":"Plante", "type2":"Poison"},
-  {"name":"Florizarre", "image":"p3", "type1":"Plante", "type2":"Poison"}
+[
+  {
+    "name": "Bulbizarre",
+    "image": "p1",
+    "type1": "Plante",
+    "type2": "Poison"
+  },
+  {
+    "name": "Herbizarre",
+    "image": "p2",
+    "type1": "Plante",
+    "type2": "Poison"
+  },
+  {
+    "name": "Florizarre",
+    "image": "p3",
+    "type1": "Plante",
+    "type2": "Poison"
+  },
+  {
+    "name": "Salameche",
+    "image": "p4",
+    "type1": "Feu"
+  },
+  {
+    "name": "Reptincel",
+    "image": "p5",
+    "type1": "Feu"
+  },
+  {
+    "name": "Dracaufeu",
+    "image": "p6",
+    "type1": "Feu",
+    "type2": "Vol"
+  },
+  {
+    "name": "Carapuce",
+    "image": "p7",
+    "type1": "Eau"
+  },
+  {
+    "name": "Carabaffe",
+    "image": "p8",
+    "type1": "Eau"
+  },
+  {
+    "name": "Tortank",
+    "image": "p9",
+    "type1": "Eau"
+  },
+  {
+    "name": "Chenipan",
+    "image": "p10",
+    "type1": "Insecte"
+  },
+  {
+    "name": "Chrysacier",
+    "image": "p11",
+    "type1": "Insecte"
+  },
+  {
+    "name": "Papilusion",
+    "image": "p12",
+    "type1": "Insecte",
+    "type2": "Vol"
+  },
+  {
+    "name": "Aspicot",
+    "image": "p13",
+    "type1": "Insecte",
+    "type2": "Poison"
+  },
+  {
+    "name": "Coconfort",
+    "image": "p14",
+    "type1": "Insecte",
+    "type2": "Poison"
+  },
+  {
+    "name": "Dardargnan",
+    "image": "p15",
+    "type1": "Insecte",
+    "type2": "Poison"
+  },
+  {
+    "name": "Roucool",
+    "image": "p16",
+    "type1": "Normal",
+    "type2": "Vol"
+  },
+  {
+    "name": "Roucoups",
+    "image": "p17",
+    "type1": "Normal",
+    "type2": "Vol"
+  },
+  {
+    "name": "Roucarnage",
+    "image": "p18",
+    "type1": "Normal",
+    "type2": "Vol"
+  },
+  {
+    "name": "Rattata",
+    "image": "p19",
+    "type1": "Normal"
+  },
+  {
+    "name": "Rattatac",
+    "image": "p20",
+    "type1": "Normal"
+  },
+  {
+    "name": "Piafabec",
+    "image": "p21",
+    "type1": "Normal",
+    "type2": "Vol"
+  },
+  {
+    "name": "Rapasdepic",
+    "image": "p22",
+    "type1": "Normal",
+    "type2": "Vol"
+  },
+  {
+    "name": "Abo",
+    "image": "p23",
+    "type1": "Poison"
+  },
+  {
+    "name": "Arbok",
+    "image": "p24",
+    "type1": "Poison"
+  },
+  {
+    "name": "Pikachu",
+    "image": "p25",
+    "type1": "Electrique"
+  },
+  {
+    "name": "Raichu",
+    "image": "p26",
+    "type1": "Electrique"
+  },
+  {
+    "name": "Sabelette",
+    "image": "p27",
+    "type1": "Sol"
+  },
+  {
+    "name": "Sablaireau",
+    "image": "p28",
+    "type1": "Sol"
+  },
+  {
+    "name": "Nidoranf",
+    "image": "p29",
+    "type1": "Poison"
+  },
+  {
+    "name": "Nidorina",
+    "image": "p30",
+    "type1": "Poison"
+  }
 ]
