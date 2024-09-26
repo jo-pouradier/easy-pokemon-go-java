@@ -78,7 +78,7 @@ public class PokedexFragment extends Fragment {
                 int id = getResources().getIdentifier(image,
                         "drawable",
                         binding.getRoot().getContext().getPackageName());
-                Pokemon pokemon = new Pokemon(id, name, id, type1, type2); // Create Pokemon object
+                Pokemon pokemon = new Pokemon(i +1, name, id, type1, type2); // Create Pokemon object
                 pokemonList.add(pokemon);
             }
         } catch (JSONException e) {
