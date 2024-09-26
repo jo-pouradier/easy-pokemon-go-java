@@ -72,9 +72,12 @@ public class PokedexFragment extends Fragment {
                 String type2 = null;
                 if (object.has("type2"))
                     type2 = object.getString("type2");
+
+                int id = getResources().getIdentifier(image,"drawable",
+                        binding.getRoot().getContext().getPackageName());
+                Pokemon poke = new Pokemon(i, name, id, POKEMON_TYPE.valueOf(type1), POKEMON_TYPE.valueOf(type2));
+                pokemonList.add(poke);
             }
-            //TO DO FINISH HERE
-            int id = getResources().getIdentifier("nomDuDrawableSansExtension","drawable", binding.getRoot().getContext().getPackageName());
 
         } catch (JSONException e) {
             e.printStackTrace();
