@@ -1,6 +1,7 @@
 package com.example.pokemongeo_tp;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,13 @@ public class PokemonListAdapter extends
 
     List<Pokemon> pokemonList;
 
+    private OnClickOnPokemonListener listener;
+    public void setOnClickOnPokemonListener(OnClickOnPokemonListener listener) {
+        this.listener = listener;
+
+    }
+
+
     public PokemonListAdapter(List<Pokemon> pokemonList) {
         assert pokemonList != null;
         this.pokemonList = pokemonList;
@@ -26,7 +34,9 @@ public class PokemonListAdapter extends
         PokemonItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.pokemon_item, parent, false);
-        return new ViewHolder(binding);
+        ViewHolder viewHolder = new ViewHolder(binding);
+        viewHolder.setOnClickOnPokemonListener(listener);
+        return viewHolder;
     }
 
     @Override
@@ -40,12 +50,22 @@ public class PokemonListAdapter extends
         return pokemonList.size();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private PokemonItemBinding binding;
         private PokemonViewModel viewModel = new PokemonViewModel();
-
+        private OnClickOnPokemonListener listener;
+        public void setOnClickOnPokemonListener(OnClickOnPokemonListener listener) {
+            this.listener = listener;
+        }
         ViewHolder(PokemonItemBinding binding) {
             super(binding.getRoot());
+            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onClickOnPokemon(viewModel.getPokemon());
+                }
+            });
             this.binding = binding;
             this.binding.setPokemonViewModel(viewModel);
         }

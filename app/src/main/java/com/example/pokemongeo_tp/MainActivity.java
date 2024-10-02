@@ -13,6 +13,13 @@ import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    OnClickOnPokemonListener listener = new OnClickOnPokemonListener() {
+        @Override
+        public void onClickOnPokemon(Pokemon Pokemon) {
+            showPokemonDetails(Pokemon);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +31,16 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         PokedexFragment fragment = new PokedexFragment();
+        fragment.setOnClickOnPokemonListener(listener);
         transaction.replace(R.id.fragment_container,fragment);
         transaction.commit();
+    }
+    public void showPokemonDetails(Pokemon pokemon) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        PokemonDetailsFragment fragment = new PokemonDetailsFragment(pokemon);
+        transaction.replace(R.id.fragment_container,fragment);
+        transaction.commit();
+
     }
 }

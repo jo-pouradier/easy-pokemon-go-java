@@ -41,6 +41,10 @@ public class PokemonViewModel extends BaseObservable {
         return "#" + pokemon.getOrder();
     }
 
+    public Pokemon getPokemon() {
+        return pokemon;
+    }
+
     public Drawable getImage(Context context, int res) {
         if (res != -1)
             return ResourcesCompat.getDrawable(context.getResources(), res, context.getTheme());
