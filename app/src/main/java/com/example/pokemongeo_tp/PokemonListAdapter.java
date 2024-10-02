@@ -68,6 +68,7 @@ public class PokemonListAdapter extends
             });
             this.binding = binding;
             this.binding.setPokemonViewModel(viewModel);
+
         }
     }
 }

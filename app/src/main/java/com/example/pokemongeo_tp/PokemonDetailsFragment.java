@@ -33,6 +33,10 @@ public class PokemonDetailsFragment extends Fragment {
         PokemonDetailsFragmentBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.pokemon_details_fragment, container, false);
         binding.setPokemonViewModel(pokemonViewModel);
+        if (pokemon.getType2() == null) {
+            binding.type2Text.setVisibility(View.GONE);
+        }
+
 
         return binding.getRoot();
     }
