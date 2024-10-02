@@ -3,13 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="pokemonViewModel"
             type="com.example.pokemongeo_tp.PokemonViewModel" />
     </data>
-
-    <data />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
