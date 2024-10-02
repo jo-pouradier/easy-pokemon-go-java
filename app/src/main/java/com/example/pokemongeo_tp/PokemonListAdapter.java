@@ -14,9 +14,10 @@ public class PokemonListAdapter extends
         RecyclerView.Adapter<PokemonListAdapter.ViewHolder> {
 
     List<Pokemon> pokemonList;
+
     public PokemonListAdapter(List<Pokemon> pokemonList) {
         assert pokemonList != null;
-        this.pokemonList =pokemonList;
+        this.pokemonList = pokemonList;
     }
 
     @NonNull
@@ -25,8 +26,9 @@ public class PokemonListAdapter extends
         PokemonItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.pokemon_item, parent, false);
-         return new ViewHolder(binding);
+        return new ViewHolder(binding);
     }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Pokemon pokemon = pokemonList.get(position);
@@ -45,11 +47,22 @@ public class PokemonListAdapter extends
         return pokemonList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+//    class ViewHolder extends RecyclerView.ViewHolder {
+//        private PokemonItemBinding binding;
+//        ViewHolder(PokemonItemBinding binding) {
+//            super(binding.getRoot());
+//            this.binding = binding;
+//        }
+//    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private PokemonItemBinding binding;
+        private PokemonViewModel viewModel = new PokemonViewModel();
+
         ViewHolder(PokemonItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            this.binding.setPokemonViewModel(viewModel);
         }
     }
 }
