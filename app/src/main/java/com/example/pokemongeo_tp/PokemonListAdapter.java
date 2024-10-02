@@ -30,13 +30,14 @@ public class PokemonListAdapter extends
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Pokemon pokemon = pokemonList.get(position);
-        holder.binding.front.setImageResource(pokemon.getFrontResource());
-        holder.binding.name.setText(pokemon.getName());
-        holder.binding.type1Text.setText(pokemon.getType1String());
-        holder.binding.number.setText("#"+pokemon.getOrder());
-        if (pokemon.getType2() != null) {
-            holder.binding.type2Text.setText(pokemon.getType2String());
-        }
+//        holder.binding.front.setImageResource(pokemon.getFrontResource());
+//        holder.binding.name.setText(pokemon.getName());
+//        holder.binding.type1Text.setText(pokemon.getType1String());
+//        holder.binding.number.setText("#"+pokemon.getOrder());
+        holder.viewModel.setPokemon(pokemon);
+//        if (pokemon.getType2() != null) {
+//            holder.binding.type2Text.setText(pokemon.getType2String());
+//        }
     }
 
     @Override
