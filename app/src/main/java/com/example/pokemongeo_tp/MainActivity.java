@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = manager.beginTransaction();
         PokemonDetailsFragment fragment = new PokemonDetailsFragment(pokemon);
         transaction.replace(R.id.fragment_container,fragment);
+        transaction.addToBackStack(null);
         transaction.commit();
 
     }
