@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/map"
+        android:enabled="true"
+        android:icon="@drawable/icon_map"
+        android:title="@string/map"/>
+    <item
+        android:id="@+id/pokedex"
+        android:enabled="true"
+        android:icon="@drawable/icon_book_close"
+        android:title="@string/pokedex"/>
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:icon="@drawable/icon_home"
+        android:title="@string/home"/>
+    <item
+        android:id="@+id/inventory"
+        android:enabled="true"
+        android:icon="@drawable/icon_inventory"
+        android:title="@string/inventory"/>
+    <item
+        android:id="@+id/pokemon_captured"
+        android:enabled="true"
+        android:icon="@drawable/icon_pokemon_captured"
+        android:title="@string/pokemon_captured"/>
+
+</menu>
