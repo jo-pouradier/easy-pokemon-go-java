@@ -9,7 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class BottomNavigationBarListener implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private FragmentManager manager;
+    private final FragmentManager manager;
 
     BottomNavigationBarListener(FragmentManager manager) {
         this.manager = manager;
@@ -20,7 +20,11 @@ public class BottomNavigationBarListener implements BottomNavigationView.OnNavig
         Fragment fragment = null;
 
         if (item.getItemId() == R.id.pokedex) {
-            fragment = new PokedexFragment(); // Replace with your fragment class
+            PokedexFragment fragmentPokedex = new PokedexFragment();
+            // TODO: set listener ? ou on peut directement le creer dans le fragment  avec le manager?
+            fragmentPokedex.setOnClickOnPokemonListener(ListenerFactory.getOnClickOnPokemonListener(manager));
+            fragment = fragmentPokedex;
+
         } else if (item.getItemId() == R.id.home) {
             fragment = new HomeFragment(); // Replace with your fragment class
         }
