@@ -80,13 +80,23 @@ public class PokedexFragment extends Fragment {
                 String image = object.getString("image");
                 POKEMON_TYPE type1 = POKEMON_TYPE.valueOf(object.getString("type1"));
                 POKEMON_TYPE type2 = null;
-                if (object.has("type2"))
+                int type2_id =getResources().getIdentifier("feu",
+                        "drawable",
+                        binding.getRoot().getContext().getPackageName()) ;
+                if (object.has("type2")) {
                     type2 = POKEMON_TYPE.valueOf(object.getString("type2"));
-                //TO DO FINISH HERE
+                    type2_id = getResources().getIdentifier(type2.toString().toLowerCase(),
+                            "drawable",
+                            binding.getRoot().getContext().getPackageName());
+                }
+                    //TO DO FINISH HERE
                 int id = getResources().getIdentifier(image,
                         "drawable",
                         binding.getRoot().getContext().getPackageName());
-                Pokemon pokemon = new Pokemon(i + 1, name, id, type1, type2); // Create Pokemon object
+                int type1_id = getResources().getIdentifier(type1.toString().toLowerCase(),
+                        "drawable",
+                        binding.getRoot().getContext().getPackageName());
+                Pokemon pokemon = new Pokemon(i + 1, name, id, type1, type1_id, type2, type2_id); // Create Pokemon object
                 pokemonList.add(pokemon);
             }
         } catch (JSONException e) {
