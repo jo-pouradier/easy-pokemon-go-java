@@ -2,6 +2,7 @@ package com.example.pokemongeo_tp.entities;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "own_pokemon",
@@ -11,7 +12,8 @@ import androidx.room.PrimaryKey;
             parentColumns = "id",
             childColumns = "pokemon_id"
         )
-    }
+    },
+        indices = {@Index(value = {"name"}, unique = true)}
 )
 public class OwnPokemonEntity {
     @PrimaryKey(autoGenerate = true)

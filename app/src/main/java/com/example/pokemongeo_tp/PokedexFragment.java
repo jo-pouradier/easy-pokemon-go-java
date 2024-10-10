@@ -13,15 +13,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.pokemongeo_tp.database.Database;
 import com.example.pokemongeo_tp.databinding.PokedexFragmentBinding;
+import com.example.pokemongeo_tp.entities.PokemonEntity;
+import com.example.pokemongeo_tp.enums.POKEMON_TYPE;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,63 +42,48 @@ public class PokedexFragment extends Fragment {
                 binding.getRoot().getContext()));
 
         // TODO: est il possible de garder la PokemonList en mémoire ? au lieu de la créer à chaque fois ?
-        createPokemonList(binding);
+        pokemonList = createPokemonList(binding);
         PokemonListAdapter adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonList.setAdapter(adapter);
         adapter.setOnClickOnPokemonListener(listener);
         return binding.getRoot();
     }
 
-    public void createPokemonList(PokedexFragmentBinding binding) {
+    public List<Pokemon> createPokemonList(PokedexFragmentBinding binding) {
         // Ouverture du fichier res/raw
-        InputStreamReader isr = new InputStreamReader(getResources().openRawResource(R.raw.poke));
+        List<Pokemon> pokeList = new ArrayList<>();
 
-        // Ouverture du fichier dans assets
-        // InputStreamReader
-        // isr =
-        // new InputStreamReader(getResources().getAssets().open("poke.json"));
-        BufferedReader reader = new BufferedReader(isr);
-        StringBuilder builder = new StringBuilder();
-        String data = "";
-        //lecture du fichier.data == null => EOF
-        while (data != null) {
-            try {
-                data = reader.readLine();
-                builder.append(data);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } //Traitement du fichier
+        List<PokemonEntity> pokemonEntities = Database.createPokemonListFromJson(binding.getRoot().getContext().getResources());
+
         try {
-            JSONArray array = new JSONArray(builder.toString());
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject object = array.getJSONObject(i);
-                String name = object.getString("name");
-                String image = object.getString("image");
-                POKEMON_TYPE type1 = POKEMON_TYPE.valueOf(object.getString("type1"));
+            for (int i = 0; i < pokemonEntities.size(); i++) {
+                PokemonEntity pokemonEntity = pokemonEntities.get(i);
+                POKEMON_TYPE type1 = POKEMON_TYPE.valueOf(pokemonEntity.type_1);
                 POKEMON_TYPE type2 = null;
-                int type2_id =getResources().getIdentifier("feu",
+
+                int type2_id = getResources().getIdentifier("feu",
                         "drawable",
                         binding.getRoot().getContext().getPackageName()) ;
-                if (object.has("type2")) {
-                    type2 = POKEMON_TYPE.valueOf(object.getString("type2"));
+                if (pokemonEntity.type_2 != null) {
+                    type2 = POKEMON_TYPE.valueOf(pokemonEntity.type_2);
                     type2_id = getResources().getIdentifier(type2.toString().toLowerCase(),
                             "drawable",
                             binding.getRoot().getContext().getPackageName());
                 }
                     //TO DO FINISH HERE
-                int id = getResources().getIdentifier(image,
+                int imgId = getResources().getIdentifier(pokemonEntity.image,
                         "drawable",
                         binding.getRoot().getContext().getPackageName());
-                int type1_id = getResources().getIdentifier(type1.toString().toLowerCase(),
+                int type1ImgId = getResources().getIdentifier(type1.toString().toLowerCase(),
                         "drawable",
                         binding.getRoot().getContext().getPackageName());
-                Pokemon pokemon = new Pokemon(i + 1, name, id, type1, type1_id, type2, type2_id); // Create Pokemon object
-                pokemonList.add(pokemon);
+                Pokemon pokemon = new Pokemon(i + 1, pokemonEntity.name, imgId, type1, type1ImgId, type2, type2_id); // Create Pokemon object
+                pokeList.add(pokemon);
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return pokeList;
     }
 
     /**

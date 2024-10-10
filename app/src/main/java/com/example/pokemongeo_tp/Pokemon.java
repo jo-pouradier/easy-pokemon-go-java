@@ -1,6 +1,8 @@
 package com.example.pokemongeo_tp;
 
 
+import com.example.pokemongeo_tp.enums.POKEMON_TYPE;
+
 public class Pokemon {
     private int order;
     private String name;
@@ -89,7 +91,5 @@ public class Pokemon {
         return type2.name();
     }
 }
-
-enum POKEMON_TYPE { Acier, Combat, Dragon, Eau, Electrique, Fee, Feu, Glace, Insecte, Normal, Plante, Poison, Psy, Roche, Sol, Spectre, Tenebre, Vol }
 
 

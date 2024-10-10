@@ -1,10 +1,11 @@
 package com.example.pokemongeo_tp.entities;
 
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 
-@Entity(tableName = "pokemon")
+@Entity(tableName = "pokemon", indices = {@Index(value = {"name"}, unique = true)})
 public class PokemonEntity {
     @PrimaryKey(autoGenerate = true)
     public int id;

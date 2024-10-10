@@ -1,6 +1,7 @@
 package com.example.pokemongeo_tp.dao;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.pokemongeo_tp.entities.ObjectEntity;
@@ -18,4 +19,10 @@ public interface ObjectDao {
 
     @Query("SELECT * FROM object WHERE name = :name")
     ObjectEntity getObjectByName(String name);
+
+    @Insert
+    void insert(List<ObjectEntity> objects);
+
+    @Insert
+    void insert(ObjectEntity object);
 }
