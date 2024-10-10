@@ -29,11 +29,21 @@ public class PokemonViewModel extends BaseObservable {
     public String getType1() {
         return pokemon.getType1String();
     }
+    @Bindable
+    public int getType1Resource() {
+        return pokemon.getType1Resource();
+    }
 
     @Bindable
     public String getType2() {
         if (pokemon.getType2() != null) return pokemon.getType2String();
         return "";
+    }
+
+    @Bindable
+    public int getType2Ressource() {
+        if (pokemon.getType2() != null) return pokemon.getType2Ressource();
+        return -1;
     }
 
     @Bindable
