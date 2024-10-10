@@ -1,4 +1,4 @@
-package com.example.pokemongeo_tp.entity;
+package com.example.pokemongeo_tp.entities;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
