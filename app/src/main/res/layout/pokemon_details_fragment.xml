@@ -20,6 +20,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@{pokemonViewModel.name}"
+            tools:text="Pikachu"
             android:textSize="30sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -35,6 +36,7 @@
             android:layout_height="200dp"
             android:layout_marginTop="16dp"
             android:elevation="4dp"
+            tools:src="@drawable/p6"
             android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.front)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +60,7 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="16dp"
             android:text="@{pokemonViewModel.type1}"
+            tools:text="Feu"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/type2_image"
@@ -70,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@{pokemonViewModel.type2}"
+            tools:text="vol"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,6 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{pokemonViewModel.number}"
+            tools:text="#6"
             android:textSize="30sp"
             android:textStyle="bold"
 
@@ -88,18 +93,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/name"
             app:layout_constraintTop_toTopOf="@id/name" />
+
         <ImageView
             android:id="@+id/type1_image"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
             android:elevation="4dp"
             android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.type1Resource)}"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/type1_text"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/front"
-            />
+            tools:src="@drawable/feu" />
         <ImageView
             android:id="@+id/type2_image"
             android:layout_width="40dp"
@@ -107,6 +112,7 @@
             android:layout_marginTop="16dp"
             android:elevation="4dp"
             android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.type2Ressource)}"
+            tools:src="@drawable/vol"
             app:layout_constraintEnd_toStartOf="@id/type2_text"
             app:layout_constraintStart_toEndOf="@id/type1_text"
             app:layout_constraintTop_toBottomOf="@id/front"

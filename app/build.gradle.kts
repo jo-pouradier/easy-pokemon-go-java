@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.pokemongeo_tp"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -35,8 +35,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
+    implementation(libs.osmdroid.android)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -44,4 +43,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }
