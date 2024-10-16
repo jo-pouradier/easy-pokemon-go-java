@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.pokemongeo_tp.databinding.PokedexFragmentBinding;
@@ -43,8 +45,7 @@ public class PokedexFragment extends Fragment {
         binding.pokemonList.setLayoutManager(new LinearLayoutManager(
                 binding.getRoot().getContext()));
 
-
-        //call createpokemonlist
+        // TODO: est il possible de garder la PokemonList en mémoire ? au lieu de la créer à chaque fois ?
         createPokemonList(binding);
         PokemonListAdapter adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonList.setAdapter(adapter);
@@ -104,10 +105,18 @@ public class PokedexFragment extends Fragment {
         }
     }
 
-
-    public void onClickOnPokemon(int position) {
-        if (listener != null)
-            listener.onClickOnPokemon(pokemonList.get(position));
+    /**
+     * Affiche les details d'un Pokemon.
+     * Fonction utilisé par le listener OnClickOnPokemonListener.
+     * @param pokemon Pokemon à afficher (donner par le listener)
+     * @param manager FragmentManager de la mainActivity
+     */
+    static public void showPokemonDetails(Pokemon pokemon, FragmentManager manager) {
+        FragmentTransaction transaction = manager.beginTransaction();
+        PokemonDetailsFragment fragment = new PokemonDetailsFragment(pokemon);
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
 }
