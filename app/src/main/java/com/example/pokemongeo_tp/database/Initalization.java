@@ -14,18 +14,28 @@ public class Initalization {
     public static void InitPokemon(Context context) {
         // check if database has pokemon
         // if not, add our json
-        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<>(
-                new ThreadEventListener(){
+        System.out.println("InitPokemon");
+        System.out.println("context: " + context);
+        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<Context, List<PokemonEntity>>(
+                new ThreadEventListener<List<PokemonEntity>>(){
                     @Override
-                    public void OnEventInThread(Object data) {}
+                    public void OnEventInThread(List<PokemonEntity> data) {
+                        System.out.println("Resolve");
+                        System.out.println("Pokemon size: " + data.size());
+                    }
                     @Override
                     public void OnEventInThreadReject(String error) {
                         System.out.println("Error: " + error);
+                        // log error
+                        System.out.println("Erroooooooooor: " + error);
                     }
                 },
                 (Context ctx) -> {
-                    Database db = Database.getInstance(context);
+                    System.out.println("Start resolve");
+                    Database db = Database.getInstance(ctx);
+                    System.out.println("Pokemon size: " + db.pokemonDao().getAll().size());
                     List<PokemonEntity> pokemons = db.pokemonDao().getAll();
+                    System.out.println("Pokemon size: " + pokemons.size());
                     if (pokemons.isEmpty()) {
                         // add pokemon from json
                         List<PokemonEntity> pokemonList = Database.createPokemonListFromJson(context.getResources());
@@ -36,6 +46,7 @@ public class Initalization {
                 context
         );
         RequestThread instance = RequestThread.getInstance();
+        instance.start();
         instance.addRequest(promise);
     }
 

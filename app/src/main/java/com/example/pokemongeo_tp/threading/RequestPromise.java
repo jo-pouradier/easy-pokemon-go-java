@@ -5,11 +5,13 @@ import java.util.function.Function;
 
 public class RequestPromise<P, R> {
     private final UUID id;
-    private R data;
-    private final P params;
-    private boolean isResolved;
     private final ThreadEventListener<R> listener;
-    private Function<P, R> callback;
+    private final Function<P, R> callback;
+    private final P params;
+
+    private R data;
+    private boolean isResolved;
+
 
     public RequestPromise(ThreadEventListener<R> listener, Function<P, R> callback, P params) {
         this.id = UUID.randomUUID();
@@ -26,6 +28,7 @@ public class RequestPromise<P, R> {
 
     public void reject(String error) {
         isResolved = false;
+        System.out.println("Rejecting request on listener");
         listener.OnEventInThreadReject(error);
     }
 

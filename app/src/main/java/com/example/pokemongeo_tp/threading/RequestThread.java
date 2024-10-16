@@ -25,18 +25,23 @@ public class RequestThread extends java.lang.Thread {
     }
 
     public void run(){
+        System.out.println("RequestThread started");
         while(true){
             RequestPromise request = null;
             try {
                 request = queue.take();
+                System.out.println("RequestThread got a request");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
             try {
+                System.out.println("RequestThread resolving a request");
                 request.resolve();
+                System.out.println("RequestThread resolved a request");
             } catch (Exception e) {
+                System.out.println("Rejecting request");
+                request.reject("THREAD ERROR" + e.toString());
                 e.printStackTrace();
-                request.reject(e.toString());
             }
         }
     }

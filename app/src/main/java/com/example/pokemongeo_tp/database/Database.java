@@ -49,6 +49,9 @@ public abstract class Database extends RoomDatabase {
 //    private Database(){}
 
     public static Database getInstance(Context context){
+        System.out.println("Database.getInstance");
+        System.out.println("db: " + db);
+        System.out.println("context: " + context);
         if(db == null){
             db = Room.databaseBuilder(
                     context,
@@ -56,6 +59,7 @@ public abstract class Database extends RoomDatabase {
                     DATABASE_NAME
             ).build();
         }
+        System.out.println("db: " + db);
         return db;
     }
 

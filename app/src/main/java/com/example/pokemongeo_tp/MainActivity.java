@@ -16,9 +16,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // init database
-        Context context = getApplicationContext();
-        Initalization.InitPokemon(context);
-        Initalization.InitObject(context);
+        Initalization.InitPokemon(this);
+        Initalization.InitObject(this);
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.bottomNavigation.setOnItemSelectedListener(new BottomNavigationBarListener(getSupportFragmentManager()));
