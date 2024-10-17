@@ -1,15 +1,12 @@
 package com.example.pokemongeo_tp;
 
-import android.content.Context;
-
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.Manifest;
-import android.os.CancellationSignal;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -23,48 +20,42 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pokemongeo_tp.database.Initalization;
 import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-
-import org.osmdroid.api.IMapController;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Marker;
-
-import java.util.concurrent.Executor;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
-    private MapFragment mapfragment;
-    private Location myLocation;
     OnClickOnPokemonListener listener = new OnClickOnPokemonListener() {
         @Override
         public void onClickOnPokemon(Pokemon Pokemon) {
             showPokemonDetails(Pokemon);
         }
     };
-
+    private MapFragment mapfragment;
+    private Location myLocation;
     LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
             System.out.println("Latitude: " + newLocation.getLatitude() + " Longitude: " + newLocation.getLongitude());
             myLocation = newLocation;
-            if (mapfragment == null){
+            if (mapfragment == null) {
                 return;
             }
             mapfragment.setLocation(newLocation);
         }
+
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             System.out.println("status changed");
         }
+
         @Override
-        public void onProviderEnabled(String provider) {
+        public void onProviderEnabled(@NonNull String provider) {
 
         }
+
         @Override
-        public void onProviderDisabled(String provider) {
+        public void onProviderDisabled(@NonNull String provider) {
         }
     };
 
@@ -75,22 +66,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull final String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-    //We have permissions[0] granted do something with it make sure again we have all the permissions
+            //We have permissions[0] granted do something with it make sure again we have all the permissions
             createLocationManager();
         } else {
-    //display an error message?
-            new AlertDialog.Builder(this)
-                    .setTitle("Permission Needed")
-                    .setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                    // code to go in to the settings
-                    }).setNegativeButton("Cancel", (dialog, which) -> {
-                    // Handle the case where the user cancels
-                    }).create().show();
+            //display an error message?
+            new AlertDialog.Builder(this).setTitle("Permission Needed").setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).").setPositiveButton("OK", (dialog, which) -> {
+                // code to go in to the settings
+            }).setNegativeButton("Cancel", (dialog, which) -> {
+                // Handle the case where the user cancels
+            }).create().show();
         }
     }
 
@@ -115,18 +102,16 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new PokedexFragment(); // Replace with your fragment class
                 } else if (item.getItemId() == R.id.home) {
                     fragment = new HomeFragment(); // Replace with your fragment class
-                } else if (item.getItemId() == R.id.map){
+                } else if (item.getItemId() == R.id.map) {
                     System.out.println("map");
                     fragment = new MapFragment();
                     mapfragment = (MapFragment) fragment;
-                    if (myLocation != null)
-                        mapfragment.setLocation(myLocation);
+                    if (myLocation != null) mapfragment.setLocation(myLocation);
 //                    mapfragment.setOnLocationChanged(myLocationListener);
                 }
 
                 if (fragment != null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
                             .commit();
                     return true;
                 }
@@ -138,26 +123,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showStartup() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
                 ActivityCompat.requestPermissions(this, permissions, 1);
             } else {
                 //display explanation message why you need the permission
-                new AlertDialog.Builder(this)
-                        .setTitle("Permission Needed")
-                        .setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).")
-                        .setPositiveButton("OK", (dialog, which) -> {
-                            // Request the permission again
-                            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    1);
-                        })
-                        .setNegativeButton("Cancel", (dialog, which) -> {
-                            // Handle the case where the user cancels
-                        })
-                        .create()
-                        .show();
+                new AlertDialog.Builder(this).setTitle("Permission Needed").setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).").setPositiveButton("OK", (dialog, which) -> {
+                    // Request the permission again
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                }).setNegativeButton("Cancel", (dialog, which) -> {
+                    // Handle the case where the user cancels
+                }).create().show();
             }
         } else {
             //We already have permission do something with it
@@ -195,16 +172,16 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F,  myLocationListener);
-            manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F,  myLocationListener);
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F, myLocationListener);
+            manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
             //remove updates
 //            manager.removeUpdates( myLocationListener);
             //manager.getCurrentLocation(LocationManager.GPS_PROVIDER, (CancellationSignal) null, (Executor) this, myLocationListener);
             return;
         }
         System.out.println("yes permission");
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F,  myLocationListener);
-        manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F,  myLocationListener);
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F, myLocationListener);
+        manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
         //remove updates
 //        manager.removeUpdates( myLocationListener);
         setOnLocationChanged(myLocationListener);
