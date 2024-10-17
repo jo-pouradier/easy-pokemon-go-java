@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -17,6 +18,7 @@
         <ImageView
             android:id="@+id/front"
             android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.front)}"
+            tools:src="@drawable/p6"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:scaleType="centerInside"
@@ -28,6 +30,7 @@
         <TextView
             android:id="@+id/name"
             android:text="@{pokemonViewModel.name}"
+            tools:text="Pikachu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -39,6 +42,7 @@
         <TextView
             android:id="@+id/type1_text"
             android:text="@{pokemonViewModel.type1}"
+            tools:text="Feu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/separator"
@@ -49,6 +53,7 @@
         <TextView
             android:id="@+id/type2_text"
             android:text="@{pokemonViewModel.type2}"
+            tools:text="vol"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/separator"
@@ -59,6 +64,7 @@
         <TextView
             android:id="@+id/number"
             android:text="@{pokemonViewModel.number}"
+            tools:text="#6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"

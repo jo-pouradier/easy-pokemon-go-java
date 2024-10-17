@@ -27,6 +27,10 @@ public class BottomNavigationBarListener implements BottomNavigationView.OnNavig
 
         } else if (item.getItemId() == R.id.home) {
             fragment = new HomeFragment(); // Replace with your fragment class
+        } else if (item.getItemId() == R.id.map){
+            MapFragment mapfragment = new MapFragment();
+
+            fragment = mapfragment;
         }
 
         if (fragment != null) {
