@@ -61,7 +61,7 @@ public class MapFragment extends Fragment {
             playerLocation = newLocation;
         }
 
-        playerLocation.setAltitude(newLocation.getAltitude());
+        playerLocation.setLatitude(newLocation.getLatitude());
         playerLocation.setLongitude(newLocation.getLongitude());
         mapController.setCenter(playerLocation);
         playerMarker.setPosition(playerLocation);
