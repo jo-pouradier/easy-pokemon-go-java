@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,12 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.example.pokemongeo_tp.database.Database;
 import com.example.pokemongeo_tp.databinding.MapFragmentBinding;
+import com.example.pokemongeo_tp.entities.PokemonEntity;
+import com.example.pokemongeo_tp.threading.RequestPromise;
+import com.example.pokemongeo_tp.threading.RequestThread;
+import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -22,10 +28,15 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MapFragment extends Fragment {
     LocationListener myLocationListener;
     private MapFragmentBinding binding;
+    private final List<Marker> pokemonMarkers;
+    private static final int MAX_POKEMON_DISTANCE = 200;
     /**
      * Needed when we recreate the view
      */
@@ -34,6 +45,7 @@ public class MapFragment extends Fragment {
     private IMapController mapController;
 
     public MapFragment() {
+        pokemonMarkers = new ArrayList<>();
     }
 
     @Override
@@ -55,6 +67,9 @@ public class MapFragment extends Fragment {
     @SuppressLint("UseCompatLoadingForDrawables")
     public void setLocation(GeoPoint newLocation) {
         if (binding == null) {
+            return;
+        }
+        if (newLocation == null) {
             return;
         }
         if (playerMarker == null) {
@@ -95,5 +110,74 @@ public class MapFragment extends Fragment {
         setLocation(playerLocation);
 
         return binding.getRoot();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public void spawnPokemon() {
+        // if no player location, don't spawn
+        if (playerLocation == null) {
+            return;
+        }
+        // delete pokemon that are too far away
+        List<Marker> toRemove = new ArrayList<>();
+        for (Marker marker : pokemonMarkers) {
+            double distance = playerLocation.distanceToAsDouble(marker.getPosition());
+            if (Math.abs(distance) >= MAX_POKEMON_DISTANCE) {
+                toRemove.add(marker);
+                binding.mapView.getOverlays().remove(marker);
+            }
+        }
+        pokemonMarkers.removeAll(toRemove);
+
+        // if more than 5 pokemon, don't spawn
+        int MAX_POKEMON_MARKERS = 5;
+        if (pokemonMarkers.size() >= MAX_POKEMON_MARKERS) {
+            return;
+        }
+        // create pokemon around the player in thread
+        int numPokemonToSpawn = MAX_POKEMON_MARKERS - pokemonMarkers.size();
+        RequestPromise<Integer, List<Marker>> promise = new RequestPromise<>(
+                new ThreadEventListener<List<Marker>>() {
+                    @Override
+                    public void OnEventInThread(List<Marker> data) {
+                        for (Marker marker : data) {
+                            binding.mapView.getOverlays().add(marker);
+                            pokemonMarkers.add(marker);
+                        }
+                    }
+
+                    @Override
+                    public void OnEventInThreadReject(String error) {
+                        Log.e("ERROR", "error while creating random pokemon: " + error);
+                    }
+                },
+                (Integer numberPokemon) -> {
+                    Database db = Database.getInstance(getContext());
+                    List<Marker> markers = new ArrayList<>();
+                    for (int i = 0; i < numberPokemon; i++) {
+                        // create a random position in a circle of 100 meters of the player
+                        double angleDegree = Math.random() * 360; // angle in degrees
+                        double distance = Math.random() * MAX_POKEMON_DISTANCE; // distance in meters
+
+                        GeoPoint position = playerLocation.destinationPoint(distance, angleDegree);
+                        Marker marker = new Marker(binding.mapView);
+                        marker.setPosition(position);
+                        // get random pokemon in the database
+
+                        PokemonEntity pokemon = db.pokemonDao().getRandomPokemon();
+                        marker.setTitle(pokemon.name);
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        marker.setIcon(getResources().getDrawable(getResources().getIdentifier(pokemon.image,
+                                "drawable",
+                                binding.getRoot().getContext().getPackageName())));
+
+                        markers.add(marker);
+                    }
+                    return markers;
+                },
+                numPokemonToSpawn
+        );
+        RequestThread instance = RequestThread.getInstance();
+        instance.addRequest(promise);
     }
 }

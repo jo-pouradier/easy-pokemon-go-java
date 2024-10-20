@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             mapfragment.setLocation(playerLocation);
+            // make spawn pokemon
+            mapfragment.spawnPokemon();
         }
 
         @Override

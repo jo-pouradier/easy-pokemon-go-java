@@ -21,6 +21,9 @@ public interface PokemonDao {
     @Query("SELECT * FROM pokemon WHERE name = :name")
     PokemonEntity getPokemonByName(String name);
 
+    @Query("SELEct * FROM pokemon ORDER BY RANDOM() limit 1")
+    PokemonEntity getRandomPokemon();
+
     @Insert
     void insert(List<PokemonEntity> pokemons);
 
