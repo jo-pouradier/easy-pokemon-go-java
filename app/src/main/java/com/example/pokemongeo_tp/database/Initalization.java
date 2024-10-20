@@ -17,10 +17,11 @@ public class Initalization {
         // check if database has pokemon
         // if not, add our json
         RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<Context, List<PokemonEntity>>(
-                new ThreadEventListener<List<PokemonEntity>>(){
+                new ThreadEventListener<List<PokemonEntity>>() {
                     @Override
                     public void OnEventInThread(List<PokemonEntity> data) {
                     }
+
                     @Override
                     public void OnEventInThreadReject(String error) {
                     }
@@ -46,12 +47,14 @@ public class Initalization {
         // check if database has object
         // if not, add objects
         RequestPromise<Context, List<ObjectEntity>> promise = new RequestPromise<Context, List<ObjectEntity>>(
-                new ThreadEventListener<List<ObjectEntity>>(){
+                new ThreadEventListener<List<ObjectEntity>>() {
                     @Override
-                    public void OnEventInThread(List<ObjectEntity> data) {}
+                    public void OnEventInThread(List<ObjectEntity> data) {
+                    }
+
                     @Override
                     public void OnEventInThreadReject(String error) {
-                        Log.e("ERROR","Rejecting request: creating objects. Error: " + error);
+                        Log.e("ERROR", "Rejecting request: creating objects. Error: " + error);
                     }
                 },
                 (Context ctx) -> {

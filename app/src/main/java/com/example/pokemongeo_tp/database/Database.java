@@ -29,17 +29,20 @@ import java.util.List;
 
 @androidx.room.Database(entities =
         {
-            InventoryEntity.class,
-            ObjectEntity.class,
-            OwnPokemonEntity.class,
-            PokemonEntity.class
+                InventoryEntity.class,
+                ObjectEntity.class,
+                OwnPokemonEntity.class,
+                PokemonEntity.class
         },
         version = 1
 )
 public abstract class Database extends RoomDatabase {
     public abstract PokemonDao pokemonDao();
+
     public abstract ObjectDao objectDao();
+
     public abstract InventoryDao inventoryDao();
+
     public abstract OwnPokemonDao ownPokemonDao();
 
     public static final String DATABASE_NAME = "database.db";
@@ -48,8 +51,8 @@ public abstract class Database extends RoomDatabase {
 
 //    private Database(){}
 
-    public static Database getInstance(Context context){
-        if(db == null){
+    public static Database getInstance(Context context) {
+        if (db == null) {
             db = Room.databaseBuilder(
                     context,
                     Database.class,
@@ -59,7 +62,7 @@ public abstract class Database extends RoomDatabase {
         return db;
     }
 
-    public static List<PokemonEntity> createPokemonListFromJson(Resources resources){
+    public static List<PokemonEntity> createPokemonListFromJson(Resources resources) {
         List<PokemonEntity> pokeList = new ArrayList<>();
         // ouverture du fichier
         InputStreamReader isr = new InputStreamReader(resources.openRawResource(R.raw.poke));

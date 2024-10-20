@@ -31,7 +31,7 @@ public class RequestThread extends java.lang.Thread {
             try {
                 request.resolve();
             } catch (Exception e) {
-                request.reject("THREAD ERROR" + e.toString());
+                request.reject("THREAD ERROR" + e);
                 e.printStackTrace();
             }
         }

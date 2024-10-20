@@ -26,7 +26,9 @@ import org.osmdroid.views.overlay.Marker;
 public class MapFragment extends Fragment {
     LocationListener myLocationListener;
     private MapFragmentBinding binding;
-    /** Needed when we recreate the view */
+    /**
+     * Needed when we recreate the view
+     */
     private GeoPoint playerLocation;
     private Marker playerMarker;
     private IMapController mapController;

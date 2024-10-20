@@ -59,14 +59,14 @@ public class PokedexFragment extends Fragment {
 
                 int type2_id = getResources().getIdentifier("feu",
                         "drawable",
-                        binding.getRoot().getContext().getPackageName()) ;
+                        binding.getRoot().getContext().getPackageName());
                 if (pokemonEntity.type_2 != null) {
                     type2 = POKEMON_TYPE.valueOf(pokemonEntity.type_2);
                     type2_id = getResources().getIdentifier(type2.toString().toLowerCase(),
                             "drawable",
                             binding.getRoot().getContext().getPackageName());
                 }
-                    //TO DO FINISH HERE
+                //TO DO FINISH HERE
                 int imgId = getResources().getIdentifier(pokemonEntity.image,
                         "drawable",
                         binding.getRoot().getContext().getPackageName());
@@ -85,6 +85,7 @@ public class PokedexFragment extends Fragment {
     /**
      * Affiche les details d'un Pokemon.
      * Fonction utilisé par le listener OnClickOnPokemonListener.
+     *
      * @param pokemon Pokemon à afficher (donner par le listener)
      * @param manager FragmentManager de la mainActivity
      */

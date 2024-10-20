@@ -8,15 +8,17 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pokemongeo_tp.databinding.PokemonItemBinding;
+
 import java.util.List;
 
-import com.example.pokemongeo_tp.databinding.PokemonItemBinding;
 public class PokemonListAdapter extends
         RecyclerView.Adapter<PokemonListAdapter.ViewHolder> {
 
     List<Pokemon> pokemonList;
 
     private OnClickOnPokemonListener listener;
+
     public void setOnClickOnPokemonListener(OnClickOnPokemonListener listener) {
         this.listener = listener;
 
@@ -52,12 +54,14 @@ public class PokemonListAdapter extends
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private PokemonItemBinding binding;
-        private PokemonViewModel viewModel = new PokemonViewModel();
+        private final PokemonItemBinding binding;
+        private final PokemonViewModel viewModel = new PokemonViewModel();
         private OnClickOnPokemonListener listener;
+
         public void setOnClickOnPokemonListener(OnClickOnPokemonListener listener) {
             this.listener = listener;
         }
+
         ViewHolder(PokemonItemBinding binding) {
             super(binding.getRoot());
             binding.getRoot().setOnClickListener(new View.OnClickListener() {

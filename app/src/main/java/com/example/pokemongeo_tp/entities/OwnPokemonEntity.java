@@ -6,13 +6,13 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "own_pokemon",
-    foreignKeys = {
-        @ForeignKey(
-            entity = PokemonEntity.class,
-            parentColumns = "id",
-            childColumns = "pokemon_id"
-        )
-    },
+        foreignKeys = {
+                @ForeignKey(
+                        entity = PokemonEntity.class,
+                        parentColumns = "id",
+                        childColumns = "pokemon_id"
+                )
+        },
         indices = {@Index(value = {"name"}, unique = true)}
 )
 public class OwnPokemonEntity {

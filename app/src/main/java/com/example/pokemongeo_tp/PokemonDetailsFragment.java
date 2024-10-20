@@ -9,14 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokemongeo_tp.databinding.PokemonDetailsFragmentBinding;
-import com.example.pokemongeo_tp.databinding.PokemonItemBinding;
 
 public class PokemonDetailsFragment extends Fragment {
-    private PokemonViewModel pokemonViewModel;
-    private Pokemon pokemon;
+    private final PokemonViewModel pokemonViewModel;
+    private final Pokemon pokemon;
 
     public PokemonDetailsFragment(Pokemon pokemon) {
         pokemonViewModel = new PokemonViewModel();

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
-            Log.i("INFO","Latitude: " + newLocation.getLatitude() + " Longitude: " + newLocation.getLongitude());
+            Log.i("INFO", "Latitude: " + newLocation.getLatitude() + " Longitude: " + newLocation.getLongitude());
             if (playerLocation == null) {
                 playerLocation = new GeoPoint(newLocation.getLatitude(), newLocation.getLongitude());
             }
