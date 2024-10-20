@@ -22,6 +22,8 @@ import com.example.pokemongeo_tp.database.Initalization;
 import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
+import org.osmdroid.util.GeoPoint;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,16 +34,19 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private MapFragment mapfragment;
-    private Location myLocation;
+    private GeoPoint playerLocation;
     LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
             System.out.println("Latitude: " + newLocation.getLatitude() + " Longitude: " + newLocation.getLongitude());
-            myLocation = newLocation;
+            if (playerLocation == null) {
+                playerLocation = new GeoPoint(newLocation.getLatitude(), newLocation.getLongitude());
+            }
+            playerLocation.setCoords(newLocation.getLatitude(), newLocation.getLongitude());
             if (mapfragment == null) {
                 return;
             }
-            mapfragment.setLocation(newLocation);
+            mapfragment.setLocation(playerLocation);
         }
 
         @Override
@@ -106,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("map");
                     fragment = new MapFragment();
                     mapfragment = (MapFragment) fragment;
-                    if (myLocation != null) mapfragment.setLocation(myLocation);
-//                    mapfragment.setOnLocationChanged(myLocationListener);
+                    mapfragment.setOnLocationChanged(myLocationListener);
                 }
 
                 if (fragment != null) {
