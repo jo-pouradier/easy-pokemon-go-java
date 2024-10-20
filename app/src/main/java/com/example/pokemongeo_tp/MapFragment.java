@@ -31,12 +31,14 @@ import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlin.jvm.internal.Lambda;
+
 
 public class MapFragment extends Fragment {
+    private static final int MAX_POKEMON_DISTANCE = 200;
+    private final List<Marker> pokemonMarkers;
     LocationListener myLocationListener;
     private MapFragmentBinding binding;
-    private final List<Marker> pokemonMarkers;
-    private static final int MAX_POKEMON_DISTANCE = 200;
     /**
      * Needed when we recreate the view
      */
@@ -75,9 +77,9 @@ public class MapFragment extends Fragment {
         if (playerMarker == null) {
             initPlayerMarker();
         }
-        playerLocation = newLocation;
-        mapController.setCenter(playerLocation);
-        playerMarker.setPosition(playerLocation);
+//        playerLocation = newLocation;
+//        playerMarker.setPosition(playerLocation);
+        changePositionSmoothly(playerMarker, playerLocation);
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -180,4 +182,60 @@ public class MapFragment extends Fragment {
         RequestThread instance = RequestThread.getInstance();
         instance.addRequest(promise);
     }
+
+    public void changePositionSmoothly(Marker marker, GeoPoint newPosition) {
+//        GeoPoint positionBefore = marker.getPosition();
+
+        ThreadEventListener<GeoPoint> listener = new ThreadEventListener<GeoPoint>() {
+            @Override
+            public void OnEventInThread(GeoPoint data) {
+                Log.d("DEBUG", "moving marker to: " + data);
+                marker.setPosition(data);
+                mapController.setCenter(data);
+            }
+
+            @Override
+            public void OnEventInThreadReject(String error) {
+                Log.e("ERROR", "error while moving marker: " + error);
+            }
+        };
+
+        RequestPromise<Marker, GeoPoint> promise = new RequestPromise<>(
+                listener,
+                (Marker marker2) -> {
+                    GeoPoint positionBefore = marker.getPosition();
+                    double distance = positionBefore.distanceToAsDouble(newPosition) ;
+                    double time = 1000; // 1 second
+                    double speed = distance / time;
+
+                    double dx = ((newPosition.getLatitude() - positionBefore.getLatitude()) / distance) * speed;
+                    double dy = ((newPosition.getLongitude() - positionBefore.getLongitude()) / distance) * speed;
+
+                    while (positionBefore.distanceToAsDouble(newPosition) > speed) {
+                        positionBefore = new GeoPoint(positionBefore.getLatitude() + dx, positionBefore.getLongitude() + dy);
+//                        marker.setPosition(positionBefore);
+                        listener.OnEventInThread(positionBefore);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            Log.e("ERROR", "error while moving marker: " + e.getMessage());
+                        }
+                    }
+                    return null;
+                },
+                marker
+        );
+        RequestThread instance = RequestThread.getInstance();
+        instance.addRequest(promise);
+
+    }
+
+
+    private double calculateLatitudeDifference(double lat1, double lat2) {
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return 6371000 * c;
+    }
+
 }
