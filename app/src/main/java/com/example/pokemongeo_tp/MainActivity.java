@@ -64,12 +64,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void setOnLocationChanged(LocationListener listener) {
-        System.out.println("set loc");
-        this.myLocationListener = listener;
-//        listener.onLocationChanged(new Location("gps"));
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -164,9 +158,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createLocationManager() {
-        //Get System Service
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //Request Location updates 120ms 100m
         System.out.println("no permission");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -176,18 +168,14 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+
+            //Request Location updates 120ms 100m
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F, myLocationListener);
             manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
-            //remove updates
-//            manager.removeUpdates( myLocationListener);
-            //manager.getCurrentLocation(LocationManager.GPS_PROVIDER, (CancellationSignal) null, (Executor) this, myLocationListener);
             return;
         }
         System.out.println("yes permission");
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F, myLocationListener);
         manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
-        //remove updates
-//        manager.removeUpdates( myLocationListener);
-        setOnLocationChanged(myLocationListener);
     }
 }
