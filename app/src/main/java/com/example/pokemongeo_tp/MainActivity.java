@@ -135,25 +135,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void createLocationManager() {
-        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Log.i("INFO", "no permission");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
-            //Request Location updates 120ms 100m
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F, myLocationListener);
-            manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
-            return;
-        }
-        Log.i("INFO", "yes permission");
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F, myLocationListener);
-        manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
+ public void createLocationManager() {
+    LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        return;
     }
+    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120, 0.5f, myLocationListener);
+}
 }
