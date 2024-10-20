@@ -1,6 +1,7 @@
 package com.example.pokemongeo_tp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,6 @@ public class PokedexFragment extends Fragment {
         binding.pokemonList.setLayoutManager(new LinearLayoutManager(
                 binding.getRoot().getContext()));
 
-        // TODO: est il possible de garder la PokemonList en mémoire ? au lieu de la créer à chaque fois ?
         pokemonList = createPokemonList(binding);
         PokemonListAdapter adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonList.setAdapter(adapter);
@@ -77,7 +77,7 @@ public class PokedexFragment extends Fragment {
                 pokeList.add(pokemon);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("ERROR", "createPokemonList", e);
         }
         return pokeList;
     }

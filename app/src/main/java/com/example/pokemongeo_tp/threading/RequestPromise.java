@@ -1,5 +1,7 @@
 package com.example.pokemongeo_tp.threading;
 
+import android.util.Log;
+
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -28,7 +30,7 @@ public class RequestPromise<P, R> {
 
     public void reject(String error) {
         isResolved = false;
-        System.out.println("Rejecting request on listener");
+        Log.i("ERROR", "Rejecting request on listener");
         listener.OnEventInThreadReject(error);
     }
 

@@ -1,6 +1,7 @@
 package com.example.pokemongeo_tp.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.pokemongeo_tp.entities.ObjectEntity;
 import com.example.pokemongeo_tp.entities.PokemonEntity;
@@ -50,7 +51,7 @@ public class Initalization {
                     public void OnEventInThread(List<ObjectEntity> data) {}
                     @Override
                     public void OnEventInThreadReject(String error) {
-                        System.out.println("Rejecting request: creating objects. Error: " + error);
+                        Log.e("ERROR","Rejecting request: creating objects. Error: " + error);
                     }
                 },
                 (Context ctx) -> {
