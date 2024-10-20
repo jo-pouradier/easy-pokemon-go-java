@@ -20,11 +20,7 @@ public class BottomNavigationBarListener implements BottomNavigationView.OnNavig
         Fragment fragment = null;
 
         if (item.getItemId() == R.id.pokedex) {
-            PokedexFragment fragmentPokedex = new PokedexFragment();
-            // TODO: set listener ? ou on peut directement le creer dans le fragment  avec le manager?
-            fragmentPokedex.setOnClickOnPokemonListener(ListenerFactory.getOnClickOnPokemonListener(manager));
-            fragment = fragmentPokedex;
-
+            fragment = new PokedexFragment();
         } else if (item.getItemId() == R.id.home) {
             fragment = new HomeFragment(); // Replace with your fragment class
         } else if (item.getItemId() == R.id.map){

@@ -15,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pokemongeo_tp.database.Initalization;
 import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
@@ -27,12 +25,6 @@ import org.osmdroid.util.GeoPoint;
 
 public class MainActivity extends AppCompatActivity {
 
-    OnClickOnPokemonListener listener = new OnClickOnPokemonListener() {
-        @Override
-        public void onClickOnPokemon(Pokemon Pokemon) {
-            showPokemonDetails(Pokemon);
-        }
-    };
     private MapFragment mapfragment;
     private GeoPoint playerLocation;
     LocationListener myLocationListener = new LocationListener() {
@@ -63,6 +55,31 @@ public class MainActivity extends AppCompatActivity {
         public void onProviderDisabled(@NonNull String provider) {
         }
     };
+    NavigationBarView.OnItemSelectedListener navigationBarListener = new NavigationBarView.OnItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment = null;
+
+            if (item.getItemId() == R.id.pokedex) {
+                fragment = new PokedexFragment(); // Replace with your fragment class
+            } else if (item.getItemId() == R.id.home) {
+                fragment = new HomeFragment(); // Replace with your fragment class
+            } else if (item.getItemId() == R.id.map) {
+                System.out.println("map");
+                fragment = new MapFragment();
+                mapfragment = (MapFragment) fragment;
+                mapfragment.setOnLocationChanged(myLocationListener);
+            }
+
+            if (fragment != null) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
+                        .commit();
+                return true;
+            }
+
+            return false;
+        }
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
@@ -90,37 +107,10 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.bottomNavigation.setOnItemSelectedListener(new BottomNavigationBarListener(getSupportFragmentManager()));
-        binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
+        binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
+        binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
 
-                if (item.getItemId() == R.id.pokedex) {
-                    fragment = new PokedexFragment(); // Replace with your fragment class
-                } else if (item.getItemId() == R.id.home) {
-                    fragment = new HomeFragment(); // Replace with your fragment class
-                } else if (item.getItemId() == R.id.map) {
-                    System.out.println("map");
-                    fragment = new MapFragment();
-                    mapfragment = (MapFragment) fragment;
-                    mapfragment.setOnLocationChanged(myLocationListener);
-                }
-
-                if (fragment != null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
-                            .commit();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-        showStartup();
-    }
-
-    public void showStartup() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
@@ -139,21 +129,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("yes permission 232");
             createLocationManager();
         }
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        PokedexFragment fragment = new PokedexFragment();
-        fragment.setOnClickOnPokemonListener(listener);
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
-    }
-
-    public void showPokemonDetails(Pokemon pokemon) {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        PokemonDetailsFragment fragment = new PokemonDetailsFragment(pokemon);
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
 
     }
 
