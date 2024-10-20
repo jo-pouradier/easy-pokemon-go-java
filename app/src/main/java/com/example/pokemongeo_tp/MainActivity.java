@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
-            System.out.println("Latitude: " + newLocation.getLatitude() + " Longitude: " + newLocation.getLongitude());
+            Log.i("INFO","Latitude: " + newLocation.getLatitude() + " Longitude: " + newLocation.getLongitude());
             if (playerLocation == null) {
                 playerLocation = new GeoPoint(newLocation.getLatitude(), newLocation.getLongitude());
             }
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            System.out.println("status changed");
+            Log.i("INFO", "status changed");
         }
 
         @Override
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             //We already have permission do something with it
-            System.out.println("yes permission 232");
+            Log.i("INFO", "yes permission 232");
             createLocationManager();
         }
 
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void createLocationManager() {
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        System.out.println("no permission");
+        Log.i("INFO", "no permission");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
             return;
         }
-        System.out.println("yes permission");
+        Log.i("INFO", "yes permission");
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120L, 100F, myLocationListener);
         manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120L, 100F, myLocationListener);
     }
