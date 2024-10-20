@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -65,10 +66,10 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.home) {
                 fragment = new HomeFragment(); // Replace with your fragment class
             } else if (item.getItemId() == R.id.map) {
-                System.out.println("map");
-                fragment = new MapFragment();
-                mapfragment = (MapFragment) fragment;
+                if (mapfragment == null) mapfragment = new MapFragment();
                 mapfragment.setOnLocationChanged(myLocationListener);
+                mapfragment.setLocation(playerLocation);
+                fragment = mapfragment;
             }
 
             if (fragment != null) {

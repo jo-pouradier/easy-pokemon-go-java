@@ -26,6 +26,7 @@ import org.osmdroid.views.overlay.Marker;
 public class MapFragment extends Fragment {
     LocationListener myLocationListener;
     private MapFragmentBinding binding;
+    /** Needed when we recreate the view */
     private GeoPoint playerLocation;
     private Marker playerMarker;
     private IMapController mapController;
@@ -57,12 +58,7 @@ public class MapFragment extends Fragment {
         if (playerMarker == null) {
             initPlayerMarker();
         }
-        if (playerLocation == null) {
-            playerLocation = newLocation;
-        }
-
-        playerLocation.setLatitude(newLocation.getLatitude());
-        playerLocation.setLongitude(newLocation.getLongitude());
+        playerLocation = newLocation;
         mapController.setCenter(playerLocation);
         playerMarker.setPosition(playerLocation);
     }
@@ -91,11 +87,10 @@ public class MapFragment extends Fragment {
         binding.mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapController = binding.mapView.getController();
         mapController.setZoom(20);
-        GeoPoint startPoint = new GeoPoint(45.763420, 4.834277);
-        mapController.setCenter(startPoint);
+        if (playerLocation == null) playerLocation = new GeoPoint(45.763420, 4.834277);
         binding.mapView.setBuiltInZoomControls(true);
         binding.mapView.setMultiTouchControls(true);
-        setLocation(startPoint);
+        setLocation(playerLocation);
 
         return binding.getRoot();
     }
