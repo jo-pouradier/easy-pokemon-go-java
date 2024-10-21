@@ -106,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // TODO: set pokemon "discovered" to false
+        //  and make gray card for undiscovered pokemon on pokedex fragment
         // init database
         Initalization.InitPokemon(this);
         Initalization.InitObject(this);

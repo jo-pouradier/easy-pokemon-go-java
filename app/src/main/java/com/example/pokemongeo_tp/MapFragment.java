@@ -267,7 +267,7 @@ public class MapFragment extends Fragment {
                         }
                     }
                     listener.OnEventInThread(playerLocation);
-
+                // TODO: add listener to launch the "collision" with other pokemon only at the end of the movement
                     return null;
                 },
                 null
@@ -276,5 +276,4 @@ public class MapFragment extends Fragment {
         instance.addRequest(promise);
 
     }
-
 }
