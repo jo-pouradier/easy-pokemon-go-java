@@ -68,9 +68,11 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.home) {
                 fragment = new HomeFragment(); // Replace with your fragment class
             } else if (item.getItemId() == R.id.map) {
-                if (mapfragment == null) mapfragment = new MapFragment();
-                mapfragment.setOnLocationChanged(myLocationListener);
-                mapfragment.setLocation(playerLocation);
+                if (mapfragment == null) {
+                    mapfragment = new MapFragment();
+                    mapfragment.setOnLocationChanged(myLocationListener);
+                    mapfragment.setLocation(playerLocation);
+                }
                 fragment = mapfragment;
             }
 
@@ -135,12 +137,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
- public void createLocationManager() {
-    LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-        return;
+    public void createLocationManager() {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            return;
+        }
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120, 0.5f, myLocationListener);
     }
-    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120, 0.5f, myLocationListener);
-}
 }
