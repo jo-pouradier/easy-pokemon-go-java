@@ -30,6 +30,7 @@ import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MapFragment extends Fragment {
     private static final int MAX_POKEMON_DISTANCE = 200;
@@ -51,6 +52,15 @@ public class MapFragment extends Fragment {
     public void onResume() {
         super.onResume();
         binding.mapView.onResume();
+        // add markers
+        playerMarker = new Marker(binding.mapView);
+        playerMarker.setPosition(playerLocation);
+        binding.mapView.getOverlays().add(playerMarker);
+        for (Marker marker : pokemonMarkers) {
+            binding.mapView.getOverlays().add(marker);
+        }
+        mapController.setCenter(playerLocation);
+        mapController.setZoom(20.0);
     }
 
     @Override
@@ -193,7 +203,7 @@ public class MapFragment extends Fragment {
                 }
                 Log.d("DEBUG", "moving marker to: " + data);
                 playerMarker.setPosition(data);
-                binding.mapView.getController().setCenter(data);
+                requireActivity().runOnUiThread(() -> { mapController.setCenter(data);});
             }
 
             @Override
@@ -210,10 +220,10 @@ public class MapFragment extends Fragment {
                     double longitude = positionBefore.getLongitude();
                     double numberOfSteps = 10;
                     int time = 1000; // 1 second in millis
-                    long dt = (long) (time/numberOfSteps);
+                    long dt = (long) (time / numberOfSteps);
 
-                    double dLatitude = (newPosition.getLatitude() - latitude)/10;
-                    double dLongitude = (newPosition.getLongitude() - longitude)/10;
+                    double dLatitude = (newPosition.getLatitude() - latitude) / 10;
+                    double dLongitude = (newPosition.getLongitude() - longitude) / 10;
 
                     GeoPoint rollingPosition = new GeoPoint(positionBefore);
                     for (int i = 0; i < numberOfSteps; i++) {
