@@ -31,9 +31,6 @@ import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 import java.util.List;
 
-import kotlin.jvm.internal.Lambda;
-
-
 public class MapFragment extends Fragment {
     private static final int MAX_POKEMON_DISTANCE = 200;
     private final List<Marker> pokemonMarkers;
