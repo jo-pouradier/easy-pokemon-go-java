@@ -1,5 +1,7 @@
 package com.example.pokemongeo_tp.threading;
 
+import android.util.Log;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class RequestThread extends java.lang.Thread {
@@ -31,8 +33,8 @@ public class RequestThread extends java.lang.Thread {
             try {
                 request.resolve();
             } catch (Exception e) {
-                request.reject("THREAD ERROR" + e);
-                e.printStackTrace();
+                request.reject("THREAD ERROR " + e);
+                Log.e("ERROR", "Error while resolving request", e);
             }
         }
     }
