@@ -2,6 +2,7 @@ package com.example.pokemongeo_tp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -34,7 +35,23 @@ import java.util.Objects;
 
 public class MapFragment extends Fragment {
     private static final int MAX_POKEMON_DISTANCE = 200;
-    private final List<Marker> pokemonMarkers;
+
+    private static class PokemonMarkerData {
+        public String name;
+        public String image;
+        public GeoPoint position;
+        public Drawable icon;
+        public Marker marker;
+
+        public PokemonMarkerData(String name, String image, GeoPoint position, Drawable icon, Marker marker) {
+            this.name = name;
+            this.image = image;
+            this.position = position;
+            this.icon = icon;
+            this.marker = marker;
+        }
+    }
+    private final List<PokemonMarkerData> pokemonMarkerData;
     LocationListener myLocationListener;
     private MapFragmentBinding binding;
     /**
@@ -45,7 +62,7 @@ public class MapFragment extends Fragment {
     private IMapController mapController;
 
     public MapFragment() {
-        pokemonMarkers = new ArrayList<>();
+        pokemonMarkerData = new ArrayList<>();
     }
 
     @Override
@@ -53,11 +70,16 @@ public class MapFragment extends Fragment {
         super.onResume();
         binding.mapView.onResume();
         // add markers
-        playerMarker = new Marker(binding.mapView);
-        playerMarker.setPosition(playerLocation);
-        binding.mapView.getOverlays().add(playerMarker);
-        for (Marker marker : pokemonMarkers) {
-            binding.mapView.getOverlays().add(marker);
+        initPlayerMarker(playerLocation);
+        for (PokemonMarkerData dataMarker : pokemonMarkerData) {
+            // recreate marker from data
+            Marker newMarker = new Marker(binding.mapView);
+            newMarker.setPosition(dataMarker.position);
+            newMarker.setTitle(dataMarker.name);
+            newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            newMarker.setIcon(dataMarker.icon);
+            dataMarker.marker = newMarker;
+            binding.mapView.getOverlays().add(newMarker);
         }
         mapController.setCenter(playerLocation);
         mapController.setZoom(20.0);
@@ -82,8 +104,7 @@ public class MapFragment extends Fragment {
             return;
         }
         if (playerMarker == null) {
-            initPlayerMarker();
-            playerMarker.setPosition(newLocation);
+            initPlayerMarker(newLocation);
         }
         playerLocation = newLocation;
 
@@ -94,8 +115,9 @@ public class MapFragment extends Fragment {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void initPlayerMarker() {
+    public void initPlayerMarker(GeoPoint newLocation) {
         playerMarker = new Marker(binding.mapView);
+        playerMarker.setPosition(newLocation);
         playerMarker.setTitle("Player point");
         playerMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
         playerMarker.setIcon(getResources().getDrawable(R.drawable.acier));
@@ -116,9 +138,8 @@ public class MapFragment extends Fragment {
         //source des données cartographique
         binding.mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapController = binding.mapView.getController();
-        mapController.setZoom(20);
+        mapController.setZoom(20.0);
         if (playerLocation == null) playerLocation = new GeoPoint(45.763420, 4.834277);
-        binding.mapView.setBuiltInZoomControls(true);
         binding.mapView.setMultiTouchControls(true);
         setLocation(playerLocation);
 
@@ -132,30 +153,30 @@ public class MapFragment extends Fragment {
             return;
         }
         // delete pokemon that are too far away
-        List<Marker> toRemove = new ArrayList<>();
-        for (Marker marker : pokemonMarkers) {
-            double distance = playerLocation.distanceToAsDouble(marker.getPosition());
+        List<PokemonMarkerData> toRemove = new ArrayList<>();
+        for (PokemonMarkerData dataMarker : pokemonMarkerData) {
+            double distance = playerLocation.distanceToAsDouble(dataMarker.position);
             if (Math.abs(distance) >= MAX_POKEMON_DISTANCE) {
-                toRemove.add(marker);
-                binding.mapView.getOverlays().remove(marker);
+                toRemove.add(dataMarker);
+                binding.mapView.getOverlays().remove(dataMarker.marker);
             }
         }
-        pokemonMarkers.removeAll(toRemove);
+        pokemonMarkerData.removeAll(toRemove);
 
         // if more than 5 pokemon, don't spawn
         int MAX_POKEMON_MARKERS = 5;
-        if (pokemonMarkers.size() >= MAX_POKEMON_MARKERS) {
+        if (pokemonMarkerData.size() >= MAX_POKEMON_MARKERS) {
             return;
         }
         // create pokemon around the player in thread
-        int numPokemonToSpawn = MAX_POKEMON_MARKERS - pokemonMarkers.size();
-        RequestPromise<Integer, List<Marker>> promise = new RequestPromise<>(
-                new ThreadEventListener<List<Marker>>() {
+        int numPokemonToSpawn = MAX_POKEMON_MARKERS - pokemonMarkerData.size();
+        RequestPromise<Integer, List<PokemonMarkerData>> promise = new RequestPromise<>(
+                new ThreadEventListener<List<PokemonMarkerData>>() {
                     @Override
-                    public void OnEventInThread(List<Marker> data) {
-                        for (Marker marker : data) {
-                            binding.mapView.getOverlays().add(marker);
-                            pokemonMarkers.add(marker);
+                    public void OnEventInThread(List<PokemonMarkerData> data) {
+                        for (PokemonMarkerData dataMarker : data) {
+                            binding.mapView.getOverlays().add(dataMarker.marker);
+                            pokemonMarkerData.add(dataMarker);
                         }
                     }
 
@@ -166,7 +187,7 @@ public class MapFragment extends Fragment {
                 },
                 (Integer numberPokemon) -> {
                     Database db = Database.getInstance(getContext());
-                    List<Marker> markers = new ArrayList<>();
+                    List<PokemonMarkerData> threadDataPokemonMarker = new ArrayList<>();
                     for (int i = 0; i < numberPokemon; i++) {
                         // create a random position in a circle of 100 meters of the player
                         double angleDegree = Math.random() * 360; // angle in degrees
@@ -180,13 +201,20 @@ public class MapFragment extends Fragment {
                         PokemonEntity pokemon = db.pokemonDao().getRandomPokemon();
                         marker.setTitle(pokemon.name);
                         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                        marker.setIcon(getResources().getDrawable(getResources().getIdentifier(pokemon.image,
+                        Drawable icon = getResources().getDrawable(getResources().getIdentifier(pokemon.image,
                                 "drawable",
-                                binding.getRoot().getContext().getPackageName())));
-
-                        markers.add(marker);
+                                binding.getRoot().getContext().getPackageName()));
+                        marker.setIcon(icon);
+                        // save data for onResume
+                        threadDataPokemonMarker.add(new PokemonMarkerData(
+                                pokemon.name,
+                                pokemon.image,
+                                position,
+                                icon,
+                                marker
+                        ));
                     }
-                    return markers;
+                    return threadDataPokemonMarker;
                 },
                 numPokemonToSpawn
         );
@@ -203,6 +231,7 @@ public class MapFragment extends Fragment {
                 }
                 Log.d("DEBUG", "moving marker to: " + data);
                 playerMarker.setPosition(data);
+                // ? why do I need this ??
                 requireActivity().runOnUiThread(() -> { mapController.setCenter(data);});
             }
 
