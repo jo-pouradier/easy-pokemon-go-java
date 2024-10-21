@@ -190,7 +190,7 @@ public class MapFragment extends Fragment {
             @Override
             public void OnEventInThread(GeoPoint data) {
                 Log.d("DEBUG", "moving marker to: " + data);
-                marker.setPosition(data);
+                playerMarker.setPosition(data);
                 mapController.setCenter(data);
             }
 
@@ -200,34 +200,36 @@ public class MapFragment extends Fragment {
             }
         };
 
-        RequestPromise<Marker, GeoPoint> promise = new RequestPromise<>(
+        RequestPromise<Void, GeoPoint> promise = new RequestPromise<>(
                 listener,
-                (Marker marker2) -> {
-                    GeoPoint positionBefore = marker2.getPosition();
-                    double distance = positionBefore.distanceToAsDouble(newPosition) ;
-                    double angle = positionBefore.bearingTo(newPosition);
+                (Void) -> {
+                    GeoPoint positionBefore = marker.getPosition();
+                    double latitude = positionBefore.getLatitude();
+                    double longitude = positionBefore.getLongitude();
                     double numberOfSteps = 10;
                     int time = 1000; // 1 second in millis
                     long dt = (long) (time/numberOfSteps);
 
-                    double dDistance = distance/numberOfSteps;
-                    double dAngle = angle/numberOfSteps;
+                    double dLatitude = (newPosition.getLatitude() - latitude)/10;
+                    double dLongitude = (newPosition.getLongitude() - longitude)/10;
 
-                    GeoPoint rollingPosition = positionBefore;
+                    GeoPoint rollingPosition = new GeoPoint(positionBefore);
                     for (int i = 0; i < numberOfSteps; i++) {
-                        rollingPosition = rollingPosition.destinationPoint(dDistance, dAngle);
+                        rollingPosition = new GeoPoint(rollingPosition.getLatitude() + dLatitude,
+                                rollingPosition.getLongitude() + dLongitude);
                         listener.OnEventInThread(new GeoPoint(rollingPosition));
+                        // TODO: got an error at the end of the loop/animation, idk why
                         try {
                             Thread.sleep(dt);
                         } catch (InterruptedException e) {
-                            Log.e("ERROR", "error while moving marker: " + e.getMessage());
+                            Log.i("INFO/ERROR", "error while moving marker: " + e.getMessage());
                         }
                     }
-                    listener.OnEventInThread(newPosition);
+                    listener.OnEventInThread(playerLocation);
 
                     return null;
                 },
-                marker
+                null
         );
         RequestThread instance = RequestThread.getInstance();
         instance.addRequest(promise);
