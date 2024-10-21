@@ -77,7 +77,7 @@ public class MapFragment extends Fragment {
         if (playerMarker == null) {
             initPlayerMarker();
         }
-//        playerLocation = newLocation;
+        playerLocation = newLocation;
 //        playerMarker.setPosition(playerLocation);
         changePositionSmoothly(playerMarker, playerLocation);
     }
@@ -203,24 +203,28 @@ public class MapFragment extends Fragment {
         RequestPromise<Marker, GeoPoint> promise = new RequestPromise<>(
                 listener,
                 (Marker marker2) -> {
-                    GeoPoint positionBefore = marker.getPosition();
+                    GeoPoint positionBefore = marker2.getPosition();
                     double distance = positionBefore.distanceToAsDouble(newPosition) ;
-                    double time = 1000; // 1 second
-                    double speed = distance / time;
+                    double angle = positionBefore.bearingTo(newPosition);
+                    double numberOfSteps = 10;
+                    int time = 1000; // 1 second in millis
+                    long dt = (long) (time/numberOfSteps);
 
-                    double dx = ((newPosition.getLatitude() - positionBefore.getLatitude()) / distance) * speed;
-                    double dy = ((newPosition.getLongitude() - positionBefore.getLongitude()) / distance) * speed;
+                    double dDistance = distance/numberOfSteps;
+                    double dAngle = angle/numberOfSteps;
 
-                    while (positionBefore.distanceToAsDouble(newPosition) > speed) {
-                        positionBefore = new GeoPoint(positionBefore.getLatitude() + dx, positionBefore.getLongitude() + dy);
-//                        marker.setPosition(positionBefore);
-                        listener.OnEventInThread(positionBefore);
+                    GeoPoint rollingPosition = positionBefore;
+                    for (int i = 0; i < numberOfSteps; i++) {
+                        rollingPosition = rollingPosition.destinationPoint(dDistance, dAngle);
+                        listener.OnEventInThread(new GeoPoint(rollingPosition));
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(dt);
                         } catch (InterruptedException e) {
                             Log.e("ERROR", "error while moving marker: " + e.getMessage());
                         }
                     }
+                    listener.OnEventInThread(newPosition);
+
                     return null;
                 },
                 marker
@@ -228,14 +232,6 @@ public class MapFragment extends Fragment {
         RequestThread instance = RequestThread.getInstance();
         instance.addRequest(promise);
 
-    }
-
-
-    private double calculateLatitudeDifference(double lat1, double lat2) {
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return 6371000 * c;
     }
 
 }
