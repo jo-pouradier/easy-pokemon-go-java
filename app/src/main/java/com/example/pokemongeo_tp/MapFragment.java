@@ -73,9 +73,13 @@ public class MapFragment extends Fragment {
         }
         if (playerMarker == null) {
             initPlayerMarker();
+            playerMarker.setPosition(newLocation);
         }
         playerLocation = newLocation;
-//        playerMarker.setPosition(playerLocation);
+
+        if (playerMarker.getPosition().equals(newLocation)) {
+            return;
+        }
         changePositionSmoothly(playerMarker, playerLocation);
     }
 
@@ -181,14 +185,15 @@ public class MapFragment extends Fragment {
     }
 
     public void changePositionSmoothly(Marker marker, GeoPoint newPosition) {
-//        GeoPoint positionBefore = marker.getPosition();
-
         ThreadEventListener<GeoPoint> listener = new ThreadEventListener<GeoPoint>() {
             @Override
             public void OnEventInThread(GeoPoint data) {
+                if (data == null) {
+                    return;
+                }
                 Log.d("DEBUG", "moving marker to: " + data);
                 playerMarker.setPosition(data);
-                mapController.setCenter(data);
+                binding.mapView.getController().setCenter(data);
             }
 
             @Override
@@ -219,7 +224,7 @@ public class MapFragment extends Fragment {
                         try {
                             Thread.sleep(dt);
                         } catch (InterruptedException e) {
-                            Log.i("INFO/ERROR", "error while moving marker: " + e.getMessage());
+                            Log.i("ERROR", "error while moving marker: " + e.getMessage());
                         }
                     }
                     listener.OnEventInThread(playerLocation);
