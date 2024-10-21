@@ -31,12 +31,11 @@ import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MapFragment extends Fragment {
+    private static final int MAX_POKEMON_DISTANCE = 200;
+    private final List<Marker> pokemonMarkers;
     LocationListener myLocationListener;
     private MapFragmentBinding binding;
-    private final List<Marker> pokemonMarkers;
-    private static final int MAX_POKEMON_DISTANCE = 200;
     /**
      * Needed when we recreate the view
      */
@@ -76,8 +75,8 @@ public class MapFragment extends Fragment {
             initPlayerMarker();
         }
         playerLocation = newLocation;
-        mapController.setCenter(playerLocation);
-        playerMarker.setPosition(playerLocation);
+//        playerMarker.setPosition(playerLocation);
+        changePositionSmoothly(playerMarker, playerLocation);
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -180,4 +179,58 @@ public class MapFragment extends Fragment {
         RequestThread instance = RequestThread.getInstance();
         instance.addRequest(promise);
     }
+
+    public void changePositionSmoothly(Marker marker, GeoPoint newPosition) {
+//        GeoPoint positionBefore = marker.getPosition();
+
+        ThreadEventListener<GeoPoint> listener = new ThreadEventListener<GeoPoint>() {
+            @Override
+            public void OnEventInThread(GeoPoint data) {
+                Log.d("DEBUG", "moving marker to: " + data);
+                playerMarker.setPosition(data);
+                mapController.setCenter(data);
+            }
+
+            @Override
+            public void OnEventInThreadReject(String error) {
+                Log.e("ERROR", "error while moving marker: " + error);
+            }
+        };
+
+        RequestPromise<Void, GeoPoint> promise = new RequestPromise<>(
+                listener,
+                (Void) -> {
+                    GeoPoint positionBefore = marker.getPosition();
+                    double latitude = positionBefore.getLatitude();
+                    double longitude = positionBefore.getLongitude();
+                    double numberOfSteps = 10;
+                    int time = 1000; // 1 second in millis
+                    long dt = (long) (time/numberOfSteps);
+
+                    double dLatitude = (newPosition.getLatitude() - latitude)/10;
+                    double dLongitude = (newPosition.getLongitude() - longitude)/10;
+
+                    GeoPoint rollingPosition = new GeoPoint(positionBefore);
+                    for (int i = 0; i < numberOfSteps; i++) {
+                        rollingPosition = new GeoPoint(rollingPosition.getLatitude() + dLatitude,
+                                rollingPosition.getLongitude() + dLongitude);
+                        listener.OnEventInThread(new GeoPoint(rollingPosition));
+                        // TODO: got an error at the end of the loop/animation, idk why
+                        try {
+                            Thread.sleep(dt);
+                        } catch (InterruptedException e) {
+                            Log.i("INFO/ERROR", "error while moving marker: " + e.getMessage());
+                        }
+                    }
+                    listener.OnEventInThread(playerLocation);
+
+                    return null;
+                },
+                null
+        );
+        RequestThread instance = RequestThread.getInstance();
+        instance.addRequest(promise);
+
+    }
+
 }
