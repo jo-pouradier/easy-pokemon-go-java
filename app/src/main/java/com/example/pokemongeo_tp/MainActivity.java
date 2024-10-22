@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MapFragment mapfragment;
     private GeoPoint playerLocation;
-    LocationListener myLocationListener = new LocationListener() {
+    private final LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
             Log.i("INFO", "Latitude: " + newLocation.getLatitude() + " Longitude: " + newLocation.getLongitude());
@@ -45,20 +45,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.i("INFO", "status changed");
-        }
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
 
         @Override
-        public void onProviderEnabled(@NonNull String provider) {
-
-        }
+        public void onProviderEnabled(@NonNull String provider) {}
 
         @Override
-        public void onProviderDisabled(@NonNull String provider) {
-        }
+        public void onProviderDisabled(@NonNull String provider) {}
     };
-    NavigationBarView.OnItemSelectedListener navigationBarListener = new NavigationBarView.OnItemSelectedListener() {
+    private final NavigationBarView.OnItemSelectedListener navigationBarListener = new NavigationBarView.OnItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment fragment = null;
@@ -94,11 +89,15 @@ public class MainActivity extends AppCompatActivity {
             createLocationManager();
         } else {
             //display an error message?
-            new AlertDialog.Builder(this).setTitle("Permission Needed").setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).").setPositiveButton("OK", (dialog, which) -> {
-                // code to go in to the settings
-            }).setNegativeButton("Cancel", (dialog, which) -> {
-                // Handle the case where the user cancels
-            }).create().show();
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission Needed")
+                    .setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).")
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        // code to go in to the settings
+                    }).setNegativeButton("Cancel", (dialog, which) -> {
+                        // Handle the case where the user cancels
+                    }).create()
+                    .show();
         }
     }
 
@@ -106,30 +105,36 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: set pokemon "discovered" to false
+        // TODO: when init pokemon set pokemon "discovered" to false
         //  and make gray card for undiscovered pokemon on pokedex fragment
         // init database
         Initalization.InitPokemon(this);
         Initalization.InitObject(this);
 
+        // setup bottom navigation bar
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        binding.bottomNavigation.setOnItemSelectedListener(new BottomNavigationBarListener(getSupportFragmentManager()));
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
         binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
 
+        // check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
                 ActivityCompat.requestPermissions(this, permissions, 1);
             } else {
                 //display explanation message why you need the permission
-                new AlertDialog.Builder(this).setTitle("Permission Needed").setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).").setPositiveButton("OK", (dialog, which) -> {
-                    // Request the permission again
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                }).setNegativeButton("Cancel", (dialog, which) -> {
-                    // Handle the case where the user cancels
-                }).create().show();
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission Needed")
+                        .setMessage("This permission is needed to hack you and know where you live but don't worry game is fun =).")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            // Request the permission again
+                            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> {
+                            // Handle the case where the user cancels
+                        })
+                        .create()
+                        .show();
             }
         } else {
             //We already have permission do something with it
@@ -146,5 +151,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120, 0.5f, myLocationListener);
+        manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120, 0.5f, myLocationListener);
     }
 }
