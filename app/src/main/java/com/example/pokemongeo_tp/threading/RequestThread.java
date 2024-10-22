@@ -2,11 +2,13 @@ package com.example.pokemongeo_tp.threading;
 
 import android.util.Log;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class RequestThread extends java.lang.Thread {
-    private final ArrayBlockingQueue<RequestPromise> queue = new ArrayBlockingQueue<>(10);
+    private static final int MAX_QUEUE_SIZE = 100;
     private static RequestThread instance;
+    private static boolean isRunning = false;
+    private final LinkedBlockingQueue<RequestPromise<?,?>> queue = new LinkedBlockingQueue<>(MAX_QUEUE_SIZE);
 
     private RequestThread() {
     }
@@ -18,18 +20,25 @@ public class RequestThread extends java.lang.Thread {
         return instance;
     }
 
-    public void addRequest(RequestPromise request) {
+    public void addRequest(RequestPromise<?,?> request) {
         queue.add(request);
     }
 
+    public boolean isRunning() {
+        return isRunning;
+    }
+
     public void run() {
-        while (true) {
-            RequestPromise request = null;
+        isRunning = true;
+        while (isRunning) {
+            RequestPromise<?,?> request;
+
             try {
                 request = queue.take();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
             try {
                 request.resolve();
             } catch (Exception e) {

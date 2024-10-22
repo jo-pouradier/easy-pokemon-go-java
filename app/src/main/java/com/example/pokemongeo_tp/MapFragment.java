@@ -219,6 +219,7 @@ public class MapFragment extends Fragment {
                 numPokemonToSpawn
         );
         RequestThread instance = RequestThread.getInstance();
+        if (!instance.isRunning()) instance.start();
         instance.addRequest(promise);
     }
 
@@ -273,6 +274,7 @@ public class MapFragment extends Fragment {
                 null
         );
         RequestThread instance = RequestThread.getInstance();
+        if (!instance.isRunning()) instance.start();
         instance.addRequest(promise);
 
     }
