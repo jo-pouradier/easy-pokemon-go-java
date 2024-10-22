@@ -31,7 +31,6 @@ import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MapFragment extends Fragment {
     private static final int MAX_POKEMON_DISTANCE = 200;
@@ -219,7 +218,7 @@ public class MapFragment extends Fragment {
                 numPokemonToSpawn
         );
         RequestThread instance = RequestThread.getInstance();
-        if (!instance.isRunning()) instance.start();
+        if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
     }
 
@@ -274,7 +273,7 @@ public class MapFragment extends Fragment {
                 null
         );
         RequestThread instance = RequestThread.getInstance();
-        if (!instance.isRunning()) instance.start();
+        if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
 
     }

@@ -24,8 +24,8 @@ public class RequestThread extends java.lang.Thread {
         queue.add(request);
     }
 
-    public boolean isRunning() {
-        return isRunning;
+    public boolean isNotRunning() {
+        return !isRunning;
     }
 
     public void run() {
