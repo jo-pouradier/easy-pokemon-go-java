@@ -17,7 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import com.example.pokemongeo_tp.database.Initalization;
+import com.example.pokemongeo_tp.database.Initialization;
 import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         // TODO: when init pokemon set pokemon "discovered" to false
         //  and make gray card for undiscovered pokemon on pokedex fragment
         // init database
-        Initalization.InitPokemon(this);
-        Initalization.InitObject(this);
+        Initialization.InitPokemon(this);
+        Initialization.InitObject(this);
 
         // setup bottom navigation bar
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);

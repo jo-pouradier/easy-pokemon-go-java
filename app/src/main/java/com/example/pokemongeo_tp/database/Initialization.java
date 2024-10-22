@@ -11,12 +11,12 @@ import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
 import java.util.List;
 
-public class Initalization {
+public class Initialization {
 
     public static void InitPokemon(Context context) {
         // check if database has pokemon
         // if not, add our json
-        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<Context, List<PokemonEntity>>(
+        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<>(
                 new ThreadEventListener<List<PokemonEntity>>() {
                     @Override
                     public void OnEventInThread(List<PokemonEntity> data) {
@@ -47,7 +47,7 @@ public class Initalization {
     public static void InitObject(Context context) {
         // check if database has object
         // if not, add objects
-        RequestPromise<Context, List<ObjectEntity>> promise = new RequestPromise<Context, List<ObjectEntity>>(
+        RequestPromise<Context, List<ObjectEntity>> promise = new RequestPromise<>(
                 new ThreadEventListener<List<ObjectEntity>>() {
                     @Override
                     public void OnEventInThread(List<ObjectEntity> data) {
@@ -60,7 +60,6 @@ public class Initalization {
                 },
                 (Context ctx) -> {
                     Database db = Database.getInstance(ctx);
-                    List<ObjectEntity> objects = db.objectDao().getAll();
                     if (db.objectDao().getAll().isEmpty()) {
                         ObjectEntity obj = new ObjectEntity();
                         obj.id = 1;
