@@ -1,5 +1,6 @@
 package com.example.pokemongeo_tp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,9 @@ import com.example.pokemongeo_tp.database.Database;
 import com.example.pokemongeo_tp.databinding.PokedexFragmentBinding;
 import com.example.pokemongeo_tp.entities.PokemonEntity;
 import com.example.pokemongeo_tp.enums.POKEMON_TYPE;
+import com.example.pokemongeo_tp.threading.RequestPromise;
+import com.example.pokemongeo_tp.threading.RequestThread;
+import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,7 @@ import java.util.List;
 public class PokedexFragment extends Fragment {
 
     List<Pokemon> pokemonList = new ArrayList<>();
+    PokemonListAdapter adapter;
 
     @Nullable
     @Override
@@ -38,7 +43,7 @@ public class PokedexFragment extends Fragment {
                 binding.getRoot().getContext()));
 
         pokemonList = createPokemonList(binding);
-        PokemonListAdapter adapter = new PokemonListAdapter(pokemonList);
+        adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonList.setAdapter(adapter);
         OnClickOnPokemonListener listener = ListenerFactory.getOnClickOnPokemonListener(this.getParentFragmentManager());
         adapter.setOnClickOnPokemonListener(listener);
@@ -48,43 +53,33 @@ public class PokedexFragment extends Fragment {
     public List<Pokemon> createPokemonList(PokedexFragmentBinding binding) {
         // Ouverture du fichier res/raw
         List<Pokemon> pokeList = new ArrayList<>();
-
-        List<PokemonEntity> pokemonEntities = Database.createPokemonListFromJson(binding.getRoot().getContext().getResources());
-
-        try {
-            for (int i = 0; i < pokemonEntities.size(); i++) {
-                PokemonEntity pokemonEntity = pokemonEntities.get(i);
-                POKEMON_TYPE type1 = POKEMON_TYPE.valueOf(pokemonEntity.type_1);
-                POKEMON_TYPE type2 = null;
-
-                int iconType1ID, iconType2ID, iconPokemonID;
-                try{
-                    iconType1ID = R.drawable.class.getDeclaredField(pokemonEntity.type_1.toLowerCase()).getInt(null);
-                } catch (Exception e) {
-                    iconType1ID = R.drawable.feu;
-                }
-                try{
-                    if (pokemonEntity.type_2 != null) {
-                        type2 = POKEMON_TYPE.valueOf(pokemonEntity.type_2);
-                        iconType2ID = R.drawable.class.getDeclaredField(pokemonEntity.type_2.toLowerCase()).getInt(null);
-                    } else {
-                        iconType2ID = R.drawable.normal;
+        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<>(
+                new ThreadEventListener<List<PokemonEntity>>() {
+                    @Override
+                    public void OnEventInThread(List<PokemonEntity> data) {
+                        for (PokemonEntity poke: data){
+                            // map pokemon with pokemonEntity
+                            pokeList.add(new Pokemon(poke));
+                        }
+                         // refresh view
+                        binding.pokemonList.setAdapter(adapter);
                     }
-                } catch (Exception e) {
-                    iconType2ID = R.drawable.normal;
-                }
-                try {
-                    iconPokemonID = R.drawable.class.getDeclaredField(pokemonEntity.image).getInt(null);
-                } catch (Exception e) {
-                    iconPokemonID = R.drawable.normal;
-                }
 
-                Pokemon pokemon = new Pokemon(i + 1, pokemonEntity.name, iconPokemonID, type1, iconType1ID, type2, iconType2ID); // Create Pokemon object
-                pokeList.add(pokemon);
-            }
-        } catch (Exception e) {
-            Log.e("ERROR", "createPokemonList", e);
-        }
+                    @Override
+                    public void OnEventInThreadReject(String error) {
+                        Log.e("ERROR", "while creating pokemon from PokemonEntity. "+ error);
+                    }
+                },
+                (Context context) -> {
+                    Database db = Database.getInstance(context);
+                    return db.pokemonDao().getAll();
+                },
+                requireContext()
+        );
+        RequestThread instance = RequestThread.getInstance();
+        if (instance.isNotRunning()) instance.start();
+        instance.addRequest(promise);
+
         return pokeList;
     }
 

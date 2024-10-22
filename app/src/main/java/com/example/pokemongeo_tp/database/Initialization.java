@@ -32,6 +32,11 @@ public class Initialization {
                     if (pokemons.isEmpty()) {
                         // add pokemon from json
                         List<PokemonEntity> pokemonList = Database.createPokemonListFromJson(context.getResources());
+                        // set pokemon bulbizarre,salameche and carapuce to discovered:
+                        pokemonList.get(0).discovered = true;
+                        pokemonList.get(3).discovered = true;
+                        pokemonList.get(6).discovered = true;
+
                         db.pokemonDao().insert(pokemonList);
                     }
                     return pokemons;

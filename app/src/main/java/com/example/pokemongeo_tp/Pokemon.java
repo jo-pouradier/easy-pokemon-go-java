@@ -1,6 +1,7 @@
 package com.example.pokemongeo_tp;
 
 
+import com.example.pokemongeo_tp.entities.PokemonEntity;
 import com.example.pokemongeo_tp.enums.POKEMON_TYPE;
 
 public class Pokemon {
@@ -13,12 +14,51 @@ public class Pokemon {
     private int type1Resource;
     private POKEMON_TYPE type2;
     private int type2Ressource;
+    private boolean discovered;
+
 
     public Pokemon() {
-        order = 1;
+        this.order = 1;
         name = "Unknown";
-        frontResource = R.drawable.p1;
-        type1 = POKEMON_TYPE.Plante;
+        frontResource = R.drawable.normal;
+        type1 = POKEMON_TYPE.Unknown;
+    }
+
+    public Pokemon(int order) {
+        this.order = order;
+        name = "Unknown";
+        frontResource = R.drawable.normal;
+        type1 = POKEMON_TYPE.Unknown;
+    }
+
+    public Pokemon(PokemonEntity poke) {
+        this.order = poke.id;
+        this.name = poke.name;
+        this.type1 = POKEMON_TYPE.valueOf(poke.type_1);
+        this.discovered = poke.discovered;
+
+        try {
+            this.type1Resource = R.drawable.class.getDeclaredField(poke.type_1.toLowerCase()).getInt(null);
+        } catch (Exception e) {
+            this.type1Resource = R.drawable.feu;
+        }
+        try {
+            if (poke.type_2 != null) {
+                this.type2 = POKEMON_TYPE.valueOf(poke.type_2);
+                this.type2Ressource = R.drawable.class.getDeclaredField(poke.type_2.toLowerCase()).getInt(null);
+            } else {
+                this.type2 = null;
+                this.type2Ressource = R.drawable.normal;
+            }
+        } catch (Exception e) {
+            this.type2Ressource = R.drawable.normal;
+        }
+        try {
+            this.frontResource = R.drawable.class.getDeclaredField(poke.image).getInt(null);
+        } catch (Exception e) {
+            this.frontResource = R.drawable.normal;
+        }
+
     }
 
     public Pokemon(int order, String name, int frontResource,
@@ -30,6 +70,7 @@ public class Pokemon {
         this.type1Resource = type1Resource;
         this.type2 = type2;
         this.type2Ressource = type2Ressource;
+        discovered = false;
     }
 
     public String getName() {
@@ -110,6 +151,14 @@ public class Pokemon {
 
     public String getType2String() {
         return type2.name();
+    }
+
+    public boolean isDiscovered() {
+        return discovered;
+    }
+
+    public void setDiscovered(boolean discovered) {
+        this.discovered = discovered;
     }
 }
 

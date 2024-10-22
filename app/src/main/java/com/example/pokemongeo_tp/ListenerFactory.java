@@ -8,7 +8,9 @@ public class ListenerFactory {
         return new OnClickOnPokemonListener() {
             @Override
             public void onClickOnPokemon(Pokemon pokemon) {
-                PokedexFragment.showPokemonDetails(pokemon, manager);
+                if (pokemon.isDiscovered()){
+                    PokedexFragment.showPokemonDetails(pokemon, manager);
+                }
             }
         };
     }

@@ -44,7 +44,11 @@ public class PokemonListAdapter extends
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Pokemon pokemon = pokemonList.get(position);
-        holder.viewModel.setPokemon(pokemon);
+        if (pokemon.isDiscovered()) {
+            holder.viewModel.setPokemon(pokemon);
+        } else {
+            holder.viewModel.setPokemon(new Pokemon(pokemon.getOrder()));
+        }
     }
 
     @Override
@@ -53,7 +57,7 @@ public class PokemonListAdapter extends
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private final PokemonItemBinding binding;
         private final PokemonViewModel viewModel = new PokemonViewModel();
         private OnClickOnPokemonListener listener;
