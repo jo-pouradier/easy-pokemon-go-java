@@ -60,7 +60,7 @@ public class MapFragment extends Fragment {
             Marker newMarker = new Marker(binding.mapView);
             newMarker.setPosition(dataMarker.position);
             newMarker.setTitle(dataMarker.name);
-            newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER); // center-center because we only have "round" img
             newMarker.setIcon(dataMarker.icon);
             dataMarker.marker = newMarker;
             binding.mapView.getOverlays().add(newMarker);
@@ -183,7 +183,7 @@ public class MapFragment extends Fragment {
 
                         PokemonEntity pokemon = db.pokemonDao().getRandomPokemon();
                         marker.setTitle(pokemon.name);
-                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
                         int iconID;
                         try {
                             iconID = R.drawable.class.getDeclaredField(pokemon.image).getInt(null);
@@ -271,29 +271,48 @@ public class MapFragment extends Fragment {
     }
 
     private void launchPokemonCollisionDetection() {
-        ThreadEventListener<Void> listener = ListenerFactory.getVoidListener();
-        RequestPromise<List<PokemonMarkerData>, Void> promise = new RequestPromise<>(
+        ThreadEventListener<List<PokemonMarkerData>> listener = new ThreadEventListener<List<PokemonMarkerData>>() {
+            @Override
+            public void OnEventInThread(List<PokemonMarkerData> data) {
+                // refresh map markers
+                // TODO: Delete or Battle ?
+                requireActivity().runOnUiThread(() -> {
+                    for (PokemonMarkerData pokeM : data) {
+                        binding.mapView.getOverlays().remove(pokeM.marker);
+                        pokemonMarkerData.remove(pokeM);
+                    }
+                    // refresh map
+                    binding.mapView.invalidate();
+                });
+
+            }
+
+            @Override
+            public void OnEventInThreadReject(String error) {
+                Log.e("ERROR", "error while detecting collision: " + error);
+            }
+        };
+        RequestPromise<List<PokemonMarkerData>, List<PokemonMarkerData>> promise = new RequestPromise<>(
                 listener, // TODO: at the end refresh map markers?
                 (List<PokemonMarkerData> pmd) -> {
                     Database db = Database.getInstance(requireContext());
                     GeoPoint playerCp = new GeoPoint(playerLocation);
-                    ArrayList<PokemonMarkerData> toDelete = new ArrayList<>(pmd.size());
+                    ArrayList<PokemonMarkerData> collisions = new ArrayList<>(pmd.size());
+
                     for (PokemonMarkerData pokeM : pmd) {
-                        if (playerCp.distanceToAsDouble(pokeM.position) < 5) {
+                        if (playerCp.distanceToAsDouble(pokeM.position) < 10) { // TODO: change distance to Constant
                             PokemonEntity pokemon = db.pokemonDao().getPokemonByName(pokeM.name);
                             pokemon.discovered = true;
                             Log.i("INFO", "Collision with " + pokemon.toString());
                             try {
                                 db.pokemonDao().update(pokemon);
-                                pokeM.marker = null;
-                                toDelete.add(pokeM);
+                                collisions.add(pokeM);
                             } catch (Exception e) {
                                 Log.e("ERROR", "error updating pokemon after collision", e);
                             }
                         }
                     }
-                    pmd.removeAll(toDelete);
-                    return null;
+                    return collisions;
                 },
                 pokemonMarkerData
         );
