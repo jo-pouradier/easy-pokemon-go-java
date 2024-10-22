@@ -1,5 +1,6 @@
 package com.example.pokemongeo_tp.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
@@ -32,4 +33,10 @@ public class PokemonEntity {
     public String type_2;
     @ColumnInfo(name = "discovered")
     public boolean discovered;
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Pokemon: name="+name+", id="+id+";";
+    }
 }

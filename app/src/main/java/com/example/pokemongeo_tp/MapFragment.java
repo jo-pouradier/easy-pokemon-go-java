@@ -220,9 +220,11 @@ public class MapFragment extends Fragment {
                     return;
                 }
                 Log.d("DEBUG", "moving marker to: " + data);
-                playerMarker.setPosition(data);
                 // ? why do I need this ??
-                requireActivity().runOnUiThread(() -> mapController.setCenter(data));
+                requireActivity().runOnUiThread(() -> {
+                    playerMarker.setPosition(data);
+                    mapController.setCenter(data);
+                });
             }
 
             @Override
@@ -249,7 +251,6 @@ public class MapFragment extends Fragment {
                         rollingPosition = new GeoPoint(rollingPosition.getLatitude() + dLatitude,
                                 rollingPosition.getLongitude() + dLongitude);
                         listener.OnEventInThread(new GeoPoint(rollingPosition));
-                        // TODO: got an error at the end of the loop/animation, idk why
                         try {
                             Thread.sleep(dt);
                         } catch (InterruptedException e) {
@@ -258,9 +259,43 @@ public class MapFragment extends Fragment {
                     }
                     listener.OnEventInThread(playerLocation);
                     // TODO: add listener to launch the "collision" with other pokemon only at the end of the movement
+                    launchPokemonCollisionDetection();
                     return null;
                 },
                 null
+        );
+        RequestThread instance = RequestThread.getInstance();
+        if (instance.isNotRunning()) instance.start();
+        instance.addRequest(promise);
+
+    }
+
+    private void launchPokemonCollisionDetection() {
+        ThreadEventListener<Void> listener = ListenerFactory.getVoidListener();
+        RequestPromise<List<PokemonMarkerData>, Void> promise = new RequestPromise<>(
+                listener, // TODO: at the end refresh map markers?
+                (List<PokemonMarkerData> pmd) -> {
+                    Database db = Database.getInstance(requireContext());
+                    GeoPoint playerCp = new GeoPoint(playerLocation);
+                    ArrayList<PokemonMarkerData> toDelete = new ArrayList<>(pmd.size());
+                    for (PokemonMarkerData pokeM : pmd) {
+                        if (playerCp.distanceToAsDouble(pokeM.position) < 5) {
+                            PokemonEntity pokemon = db.pokemonDao().getPokemonByName(pokeM.name);
+                            pokemon.discovered = true;
+                            Log.i("INFO", "Collision with " + pokemon.toString());
+                            try {
+                                db.pokemonDao().update(pokemon);
+                                pokeM.marker = null;
+                                toDelete.add(pokeM);
+                            } catch (Exception e) {
+                                Log.e("ERROR", "error updating pokemon after collision", e);
+                            }
+                        }
+                    }
+                    pmd.removeAll(toDelete);
+                    return null;
+                },
+                pokemonMarkerData
         );
         RequestThread instance = RequestThread.getInstance();
         if (instance.isNotRunning()) instance.start();
