@@ -40,7 +40,6 @@ public class Initialization {
         );
         RequestThread instance = RequestThread.getInstance();
         if (instance.isNotRunning()) instance.start();
-        instance.start();
         instance.addRequest(promise);
     }
 
