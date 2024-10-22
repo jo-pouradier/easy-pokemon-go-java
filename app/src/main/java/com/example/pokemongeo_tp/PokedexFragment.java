@@ -57,23 +57,29 @@ public class PokedexFragment extends Fragment {
                 POKEMON_TYPE type1 = POKEMON_TYPE.valueOf(pokemonEntity.type_1);
                 POKEMON_TYPE type2 = null;
 
-                int type2_id = getResources().getIdentifier("feu",
-                        "drawable",
-                        binding.getRoot().getContext().getPackageName());
-                if (pokemonEntity.type_2 != null) {
-                    type2 = POKEMON_TYPE.valueOf(pokemonEntity.type_2);
-                    type2_id = getResources().getIdentifier(type2.toString().toLowerCase(),
-                            "drawable",
-                            binding.getRoot().getContext().getPackageName());
+                int iconType1ID, iconType2ID, iconPokemonID;
+                try{
+                    iconType1ID = R.drawable.class.getDeclaredField(pokemonEntity.type_1.toLowerCase()).getInt(null);
+                } catch (Exception e) {
+                    iconType1ID = R.drawable.feu;
                 }
-                //TO DO FINISH HERE
-                int imgId = getResources().getIdentifier(pokemonEntity.image,
-                        "drawable",
-                        binding.getRoot().getContext().getPackageName());
-                int type1ImgId = getResources().getIdentifier(type1.toString().toLowerCase(),
-                        "drawable",
-                        binding.getRoot().getContext().getPackageName());
-                Pokemon pokemon = new Pokemon(i + 1, pokemonEntity.name, imgId, type1, type1ImgId, type2, type2_id); // Create Pokemon object
+                try{
+                    if (pokemonEntity.type_2 != null) {
+                        type2 = POKEMON_TYPE.valueOf(pokemonEntity.type_2);
+                        iconType2ID = R.drawable.class.getDeclaredField(pokemonEntity.type_2.toLowerCase()).getInt(null);
+                    } else {
+                        iconType2ID = R.drawable.normal;
+                    }
+                } catch (Exception e) {
+                    iconType2ID = R.drawable.normal;
+                }
+                try {
+                    iconPokemonID = R.drawable.class.getDeclaredField(pokemonEntity.image).getInt(null);
+                } catch (Exception e) {
+                    iconPokemonID = R.drawable.normal;
+                }
+
+                Pokemon pokemon = new Pokemon(i + 1, pokemonEntity.name, iconPokemonID, type1, iconType1ID, type2, iconType2ID); // Create Pokemon object
                 pokeList.add(pokemon);
             }
         } catch (Exception e) {
