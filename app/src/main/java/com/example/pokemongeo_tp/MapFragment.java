@@ -303,7 +303,7 @@ public class MapFragment extends Fragment {
                         if (playerCp.distanceToAsDouble(pokeM.position) < 10) { // TODO: change distance to Constant
                             PokemonEntity pokemon = db.pokemonDao().getPokemonByName(pokeM.name);
                             pokemon.discovered = true;
-                            Log.i("INFO", "Collision with " + pokemon.toString());
+                            Log.i("INFO", "Collision with " + pokemon);
                             try {
                                 db.pokemonDao().update(pokemon);
                                 collisions.add(pokeM);
