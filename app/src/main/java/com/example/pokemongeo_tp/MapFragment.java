@@ -193,8 +193,7 @@ public class MapFragment extends Fragment {
                             Log.e("ERROR", "error while getting image: " + e.getMessage());
                             iconID = R.drawable.normal;
                         }
-                        Drawable icon = ContextCompat.getDrawable(requireContext(), iconID);
-                        marker.setIcon(icon);
+                        Drawable icon = ContextCompat.getDrawable(requireContext(), iconID);marker.setIcon(icon);
 
                         // save data for onResume
                         threadDataPokemonMarker.add(new PokemonMarkerData(

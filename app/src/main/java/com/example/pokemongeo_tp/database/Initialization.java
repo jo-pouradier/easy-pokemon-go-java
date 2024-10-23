@@ -9,6 +9,14 @@ import com.example.pokemongeo_tp.threading.RequestPromise;
 import com.example.pokemongeo_tp.threading.RequestThread;
 import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 public class Initialization {
@@ -38,6 +46,11 @@ public class Initialization {
                         pokemonList.get(6).discovered = true;
 
                         db.pokemonDao().insert(pokemonList);
+                    }
+                    try {
+                        getPokemonStatsFromPokeApi();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                     return pokemons;
                 },
@@ -86,5 +99,55 @@ public class Initialization {
         if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
 
+    }
+
+    static void getPokemonStatsFromPokeApi() throws IOException {
+        URL url = new URL("https://beta.pokeapi.co/graphql/v1beta");
+        HttpURLConnection c;
+
+        c = (HttpURLConnection) url.openConnection();
+        c.setRequestMethod("POST");
+        c.setDoOutput(true);
+        c.setRequestProperty("Accept","*/*");
+//        InputStream estream = c.getErrorStream();
+        OutputStream ostream = c.getOutputStream();
+        DataOutputStream dos = new DataOutputStream(ostream);
+        String data ="{ operationName: \"samplePokeApiQuery\", query: \"query samplePokeApiQuery { \n" +
+                "  pokemons: pokemon_v2_pokemon(where: {id: {_lte: 151}}, order_by: {id: asc}) {\n" +
+                "    name\n" +
+                "    id\n" +
+                "    height\n" +
+                "    pokemon_v2_pokemonstats{\n" +
+                "      base_stat\n" +
+                "      pokemon_v2_stat{\n" +
+                "        name\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}\", variables: {}}";
+        dos.writeBytes(data);
+        dos.flush();
+        ostream.close();
+
+
+        if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            throw new IOException(c.getResponseMessage());
+        }
+//        c.setDoInput(true);
+        InputStream instream = c.getInputStream();
+        InputStreamReader isr = new InputStreamReader(instream);
+        BufferedReader br = new BufferedReader(isr);
+        String line;
+        StringBuilder response = new StringBuilder();
+        while ((line = br.readLine()) != null) {
+            response.append(line);
+        }
+        br.close();
+        isr.close();
+        instream.close();
+
+        Log.i("INFO", response.toString());
+
+        c.disconnect();
     }
 }
