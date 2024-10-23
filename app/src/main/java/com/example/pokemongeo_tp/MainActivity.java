@@ -62,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new PokedexFragment(); // Replace with your fragment class
             } else if (item.getItemId() == R.id.home) {
                 fragment = new HomeFragment(); // Replace with your fragment class
-            } else if (item.getItemId() == R.id.map) {
+            } else if (item.getItemId() == R.id.inventory) {
+                fragment = new InventoryFragment(); // Replace with your fragment class
+            }
+            else if (item.getItemId() == R.id.map) {
                 if (mapfragment == null) {
                     mapfragment = new MapFragment();
                     mapfragment.setOnLocationChanged(myLocationListener);

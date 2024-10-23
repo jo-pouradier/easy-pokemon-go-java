@@ -8,11 +8,11 @@ import androidx.room.RoomDatabase;
 
 import com.example.pokemongeo_tp.R;
 import com.example.pokemongeo_tp.dao.InventoryDao;
-import com.example.pokemongeo_tp.dao.ObjectDao;
+import com.example.pokemongeo_tp.dao.ItemDao;
 import com.example.pokemongeo_tp.dao.OwnPokemonDao;
 import com.example.pokemongeo_tp.dao.PokemonDao;
 import com.example.pokemongeo_tp.entities.InventoryEntity;
-import com.example.pokemongeo_tp.entities.ObjectEntity;
+import com.example.pokemongeo_tp.entities.ItemEntity;
 import com.example.pokemongeo_tp.entities.OwnPokemonEntity;
 import com.example.pokemongeo_tp.entities.PokemonEntity;
 
@@ -30,7 +30,7 @@ import java.util.List;
 @androidx.room.Database(entities =
         {
                 InventoryEntity.class,
-                ObjectEntity.class,
+                ItemEntity.class,
                 OwnPokemonEntity.class,
                 PokemonEntity.class
         },
@@ -39,7 +39,7 @@ import java.util.List;
 public abstract class Database extends RoomDatabase {
     public abstract PokemonDao pokemonDao();
 
-    public abstract ObjectDao objectDao();
+    public abstract ItemDao itemDao();
 
     public abstract InventoryDao inventoryDao();
 

@@ -3,12 +3,14 @@ package com.example.pokemongeo_tp.database;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.pokemongeo_tp.entities.ObjectEntity;
+import com.example.pokemongeo_tp.entities.InventoryEntity;
+import com.example.pokemongeo_tp.entities.ItemEntity;
 import com.example.pokemongeo_tp.entities.PokemonEntity;
 import com.example.pokemongeo_tp.threading.RequestPromise;
 import com.example.pokemongeo_tp.threading.RequestThread;
 import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Initialization {
@@ -51,10 +53,10 @@ public class Initialization {
     public static void InitObject(Context context) {
         // check if database has object
         // if not, add objects
-        RequestPromise<Context, List<ObjectEntity>> promise = new RequestPromise<>(
-                new ThreadEventListener<List<ObjectEntity>>() {
+        RequestPromise<Context, List<ItemEntity>> promise = new RequestPromise<>(
+                new ThreadEventListener<List<ItemEntity>>() {
                     @Override
-                    public void OnEventInThread(List<ObjectEntity> data) {
+                    public void OnEventInThread(List<ItemEntity> data) {
                     }
 
                     @Override
@@ -64,21 +66,29 @@ public class Initialization {
                 },
                 (Context ctx) -> {
                     Database db = Database.getInstance(ctx);
-                    if (db.objectDao().getAll().isEmpty()) {
-                        ObjectEntity obj = new ObjectEntity();
-                        obj.id = 1;
+                    if (db.itemDao().getAll().isEmpty()) {
+                        ItemEntity obj = new ItemEntity();
+                        obj.item_id = 1;
                         obj.name = "Pokeball";
                         obj.image = "pokeball";
-                        db.objectDao().insert(obj);
+                        db.itemDao().insert(obj);
 
-                        obj = new ObjectEntity();
-                        obj.id = 2;
+                        obj = new ItemEntity();
+                        obj.item_id = 2;
                         obj.name = "Potion";
                         obj.image = "potion";
-                        db.objectDao().insert(obj);
+                        db.itemDao().insert(obj);
 
                     }
-                    return db.objectDao().getAll();
+                    if (db.inventoryDao().getAll().isEmpty()) {
+                        List<ItemEntity> itemList = db.itemDao().getAll();
+                        List<InventoryEntity> invList = new ArrayList<InventoryEntity>();
+                        for (ItemEntity item : itemList) {
+                            invList.add(new InventoryEntity(item.item_id, item.item_id, 100));
+                        }
+                        db.inventoryDao().insert(invList);
+                    }
+                    return db.itemDao().getAll();
                 },
                 context
         );
