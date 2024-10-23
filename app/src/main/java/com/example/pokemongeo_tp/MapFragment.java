@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -221,7 +223,7 @@ public class MapFragment extends Fragment {
                 }
                 Log.d("DEBUG", "moving marker to: " + data);
                 // ? why do I need this ??
-                requireActivity().runOnUiThread(() -> {
+                new Handler(Looper.getMainLooper()).post(() -> {
                     playerMarker.setPosition(data);
                     mapController.setCenter(data);
                 });
@@ -276,7 +278,7 @@ public class MapFragment extends Fragment {
             public void OnEventInThread(List<PokemonMarkerData> data) {
                 // refresh map markers
                 // TODO: Delete or Battle ?
-                requireActivity().runOnUiThread(() -> {
+                new Handler(Looper.getMainLooper()).post(() -> {
                     for (PokemonMarkerData pokeM : data) {
                         binding.mapView.getOverlays().remove(pokeM.marker);
                         pokemonMarkerData.remove(pokeM);
