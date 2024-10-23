@@ -56,7 +56,7 @@ public class Initialization {
         try {
             getPokemonStatsFromPokeApi();
         } catch (Exception e) {
-            Log.e("ERROR", "error fetching poke api", e)
+            Log.e("ERROR", "error fetching poke api", e);
         }
 
         RequestThread instance = RequestThread.getInstance();
