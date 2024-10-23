@@ -1,0 +1,9 @@
+steps:
+  build:
+    image: eclipse-temurin:17
+    commands:
+      - bash ./gradlew assembleDebug
+    environment:
+      - ANDROID_HOME=/mnt/sdk
+    volumes:
+      - /home/woodpecker/sdk:/mnt/sdk

@@ -2,6 +2,8 @@ package com.example.pokemongeo_tp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +64,9 @@ public class PokedexFragment extends Fragment {
                             pokeList.add(new Pokemon(poke));
                         }
                          // refresh view
-                        binding.pokemonList.setAdapter(adapter);
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            binding.pokemonList.setAdapter(adapter);
+                        });
                     }
 
                     @Override
