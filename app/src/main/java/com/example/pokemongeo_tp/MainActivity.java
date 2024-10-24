@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MapFragment mapfragment;
     private GeoPoint playerLocation;
+    private ActivityMainBinding binding;
     private final LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
@@ -84,6 +85,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public final onPokemonDiscoveryEndListener pokemonDiscoveryEndListener = new onPokemonDiscoveryEndListener(){
+        @Override
+        public void onPokemonDiscoveryEnd(Pokemon pokemon){
+            // ? return to the map: set navbar to map ?
+            binding.bottomNavigation.setSelectedItemId(R.id.map);
+        }
+    };
+
+    public final onPokemonDiscoveryListener pokemonDiscoveryListener = new onPokemonDiscoveryListener(){
+        @Override
+        public void onPokemonDiscovery(Pokemon pokemon){
+            DiscoveryFragment fragment = new DiscoveryFragment();
+            fragment.setPokemon(pokemon);
+            fragment.setListener(pokemonDiscoveryEndListener);
+            // set fragment in container
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
+                    .commit();
+        }
+    };
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -114,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         Initialization.InitPokemonStats(this);
 
         // setup bottom navigation bar
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
         binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
 

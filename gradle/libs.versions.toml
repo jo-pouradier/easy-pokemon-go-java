@@ -13,6 +13,9 @@ roomCommon = "2.6.1"
 roomRuntime = "2.6.1"
 roomCompiler = "2.6.1"
 preference = "1.2.1"
+legacySupportV4 = "1.0.0"
+lifecycleLivedataKtx = "2.6.1"
+lifecycleViewmodelKtx = "2.6.1"
 
 [libraries]
 cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
@@ -28,6 +31,9 @@ room-common = { group = "androidx.room", name = "room-common", version.ref = "ro
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
+lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
