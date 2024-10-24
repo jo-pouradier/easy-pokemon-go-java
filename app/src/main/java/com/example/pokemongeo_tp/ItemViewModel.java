@@ -1,9 +1,5 @@
 package com.example.pokemongeo_tp;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-
-import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 

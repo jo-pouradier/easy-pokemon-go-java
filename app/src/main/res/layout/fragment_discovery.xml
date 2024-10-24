@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="discoveryViewModel"
+            type="com.example.pokemongeo_tp.DiscoveryViewModel"/>
+    </data>
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context=".DiscoveryFragment">
+
+
+    <!--    add button to click on -->
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@{discoveryViewModel.pokemon.name}" />
+        android:layout_height="34dp"
+        android:text="@{discoveryViewModel.name}"
+        tools:text="test" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="92dp"
+        android:onClick="@{() -> discoveryViewModel.onButtonClick()}"
+        android:text="@string/catchPokemon"
+        app:layout_constraintEnd_toEndOf="parent" />
 </FrameLayout>
+</layout>

@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 if (mapfragment == null) {
                     mapfragment = new MapFragment();
                     mapfragment.setOnLocationChanged(myLocationListener);
+                    mapfragment.setOnPokemonDiscoveryListener(pokemonDiscoveryListener);
                     mapfragment.setLocation(playerLocation);
                 }
                 fragment = mapfragment;
@@ -87,9 +88,9 @@ public class MainActivity extends AppCompatActivity {
 
     public final onPokemonDiscoveryEndListener pokemonDiscoveryEndListener = new onPokemonDiscoveryEndListener(){
         @Override
-        public void onPokemonDiscoveryEnd(Pokemon pokemon){
-            // ? return to the map: set navbar to map ?
-            binding.bottomNavigation.setSelectedItemId(R.id.map);
+        public void onPokemonDiscoveryEnd(){
+            Log.d("PokemonDiscoveryEnd", "end of discovery, change view");
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mapfragment).commit();
         }
     };
 

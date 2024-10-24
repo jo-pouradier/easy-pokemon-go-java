@@ -7,4 +7,5 @@
     <string name="inventory">Inventory</string>
     <string name="pokemon_captured">Pokemon Captured</string>
     <string name="map">Map</string>
+    <string name="catchPokemon">Capture!</string>
 </resources>

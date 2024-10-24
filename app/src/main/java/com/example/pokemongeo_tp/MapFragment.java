@@ -46,6 +46,7 @@ public class MapFragment extends Fragment {
     private GeoPoint playerLocation;
     private Marker playerMarker;
     private IMapController mapController;
+    private onPokemonDiscoveryListener onPokemonDiscoveryListener;
 
     public MapFragment() {
         pokemonMarkerData = new ArrayList<>();
@@ -79,6 +80,10 @@ public class MapFragment extends Fragment {
 
     public void setOnLocationChanged(LocationListener listener) {
         this.myLocationListener = listener;
+    }
+
+    public void setOnPokemonDiscoveryListener(onPokemonDiscoveryListener listener) {
+        this.onPokemonDiscoveryListener = listener;
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -282,6 +287,13 @@ public class MapFragment extends Fragment {
                     }
                     // refresh map
                     binding.mapView.invalidate();
+//                    assert pokemonMarkerData.size() = ;
+                    Log.d("Collision", "pokemon discovered: " + data);
+                    if (data.size() == 1){
+                        Log.d("DEBUG", "pokemon discovered: " + data);
+                        Log.d("DEBUG", "pokemon discovered: " + data.get(0).pokemonEntity);
+                        onPokemonDiscoveryListener.onPokemonDiscovery(new Pokemon(data.get(0).pokemonEntity));
+                    }
                 });
 
             }
@@ -296,7 +308,7 @@ public class MapFragment extends Fragment {
                 (List<PokemonMarkerData> pmd) -> {
                     Database db = Database.getInstance(requireContext());
                     GeoPoint playerCp = new GeoPoint(playerLocation);
-                    ArrayList<PokemonMarkerData> collisions = new ArrayList<>(pmd.size());
+                    ArrayList<PokemonMarkerData> collisions = new ArrayList<>();
 
                     for (PokemonMarkerData pokeM : pmd) {
                         if (playerCp.distanceToAsDouble(pokeM.position) < 10) { // TODO: change distance to Constant
@@ -305,6 +317,7 @@ public class MapFragment extends Fragment {
                             Log.i("INFO", "Collision with " + pokemon);
                             try {
                                 db.pokemonDao().update(pokemon);
+                                pokeM.pokemonEntity = pokemon;
                                 collisions.add(pokeM);
                             } catch (Exception e) {
                                 Log.e("ERROR", "error updating pokemon after collision", e);
@@ -326,6 +339,7 @@ public class MapFragment extends Fragment {
         public GeoPoint position;
         public Drawable icon;
         public Marker marker;
+        public PokemonEntity pokemonEntity;
 
         public PokemonMarkerData(String name, String image, GeoPoint position, Drawable icon, Marker marker) {
             this.name = name;
