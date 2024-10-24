@@ -6,6 +6,10 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+
 @Entity(tableName = "pokemon", indices = {@Index(value = {"name"}, unique = true)})
 public class PokemonEntity {
     @PrimaryKey(autoGenerate = true)
@@ -38,5 +42,11 @@ public class PokemonEntity {
     @Override
     public String toString() {
         return "Pokemon: name="+name+", id="+id+";";
+    }
+
+    public void setStat(String statName, Integer statValue) throws NoSuchFieldException, IllegalAccessException {
+        // set stat by name
+        Field field = this.getClass().getDeclaredField(statName);
+        field.setInt(this, statValue);
     }
 }

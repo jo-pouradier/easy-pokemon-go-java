@@ -10,6 +10,10 @@ import com.example.pokemongeo_tp.threading.RequestPromise;
 import com.example.pokemongeo_tp.threading.RequestThread;
 import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -53,11 +57,6 @@ public class Initialization {
                 },
                 context
         );
-        try {
-            getPokemonStatsFromPokeApi();
-        } catch (Exception e) {
-            Log.e("ERROR", "error fetching poke api", e);
-        }
 
         RequestThread instance = RequestThread.getInstance();
         if (instance.isNotRunning()) instance.start();
@@ -96,12 +95,13 @@ public class Initialization {
                     }
                     if (db.inventoryDao().getAll().isEmpty()) {
                         List<ItemEntity> itemList = db.itemDao().getAll();
-                        List<InventoryEntity> invList = new ArrayList<InventoryEntity>();
+                        List<InventoryEntity> invList = new ArrayList<>();
                         for (ItemEntity item : itemList) {
                             invList.add(new InventoryEntity(item.item_id, item.item_id, 100));
                         }
                         db.inventoryDao().insert(invList);
                     }
+
                     return db.itemDao().getAll();
                 },
                 context
@@ -109,42 +109,39 @@ public class Initialization {
         RequestThread instance = RequestThread.getInstance();
         if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
-
     }
 
-    static void getPokemonStatsFromPokeApi() throws IOException {
-        URL url = new URL("https://beta.pokeapi.co/graphql/v1beta");
-        HttpURLConnection c;
+    public static void InitPokemonStats(Context context) {
+        // simplest thread
+        new Thread(() -> {
+            try {
+                Initialization.getPokemonStatsFromPokeApi(context);
+            } catch (IOException e) {
+                Log.e("PokeAPIERROR", "error fetching poke api", e);
+            }
+        }).start();
+    }
 
+    private static void getPokemonStatsFromPokeApi(Context context) throws IOException {
+        URL url = new URL("https://beta.pokeapi.co/graphql/v1beta");
+
+        HttpURLConnection c;
         c = (HttpURLConnection) url.openConnection();
         c.setRequestMethod("POST");
         c.setDoOutput(true);
         c.setRequestProperty("Accept","*/*");
-//        InputStream estream = c.getErrorStream();
+
         OutputStream ostream = c.getOutputStream();
         DataOutputStream dos = new DataOutputStream(ostream);
-        String data ="{ operationName: \"samplePokeApiQuery\", query: \"query samplePokeApiQuery { \n" +
-                "  pokemons: pokemon_v2_pokemon(where: {id: {_lte: 151}}, order_by: {id: asc}) {\n" +
-                "    name\n" +
-                "    id\n" +
-                "    height\n" +
-                "    pokemon_v2_pokemonstats{\n" +
-                "      base_stat\n" +
-                "      pokemon_v2_stat{\n" +
-                "        name\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }\n" +
-                "}\", variables: {}}";
+        String data ="{ \"operationName\": \"getPokemonStats\", \"query\":\"query getPokemonStats { pokemons: pokemon_v2_pokemon(where:{id:{_lte: 151}},order_by:{id: asc}){name,id, height, pokemon_v2_pokemonstats{base_stat, pokemon_v2_stat{name}}}}\", \"variables\": null}";
         dos.writeBytes(data);
         dos.flush();
         ostream.close();
 
-
         if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
             throw new IOException(c.getResponseMessage());
         }
-//        c.setDoInput(true);
+
         InputStream instream = c.getInputStream();
         InputStreamReader isr = new InputStreamReader(instream);
         BufferedReader br = new BufferedReader(isr);
@@ -153,12 +150,43 @@ public class Initialization {
         while ((line = br.readLine()) != null) {
             response.append(line);
         }
+        Log.i("PokeAPI", response.toString());
+
         br.close();
         isr.close();
         instream.close();
-
-        Log.i("INFO", response.toString());
-
         c.disconnect();
+        JSONObject obj = null;
+        JSONArray pokemons = null;
+        try {
+            obj = new JSONObject(response.toString());
+            pokemons = obj.getJSONObject("data").getJSONArray("pokemons");
+        } catch (JSONException e) {
+            Log.e("JSONERROR", "error parsing json", e);
+        }
+        assert pokemons != null;
+
+        Database db = Database.getInstance(context);
+
+        for (int i = 0; i < pokemons.length(); i++){
+            try {
+                JSONObject pokemon = pokemons.getJSONObject(i);
+                PokemonEntity pokemonEntity = db.pokemonDao().getPokemonById(pokemon.getInt("id"));
+                JSONArray stats = pokemon.getJSONArray("pokemon_v2_pokemonstats");
+                for (int j = 0; j < stats.length(); j++){
+                    try {
+                        JSONObject stat = stats.getJSONObject(j);
+                        String statName = stat.getJSONObject("pokemon_v2_stat").getString("name");
+                        Integer statValue = stat.getInt("base_stat");
+                        pokemonEntity.setStat(statName, statValue);
+                        db.pokemonDao().update(pokemonEntity);
+                    } catch ( JSONException | NoSuchFieldException | IllegalAccessException e) {
+                        Log.e("JSONERROR", "error parsing json entity name: " + pokemonEntity.name , e);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e("JSONERROR", "error parsing json", e);
+            }
+        }
     }
 }
