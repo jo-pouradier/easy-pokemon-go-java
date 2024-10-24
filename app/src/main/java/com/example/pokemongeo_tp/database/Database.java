@@ -2,6 +2,7 @@ package com.example.pokemongeo_tp.database;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -70,7 +71,7 @@ public abstract class Database extends RoomDatabase {
                 data = reader.readLine();
                 builder.append(data);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e("ERROR", "Error while reading file", e);
             }
         } //Traitement du fichier
         try {

@@ -9,6 +9,18 @@ import com.example.pokemongeo_tp.threading.RequestPromise;
 import com.example.pokemongeo_tp.threading.RequestThread;
 import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +56,7 @@ public class Initialization {
                 },
                 context
         );
+
         RequestThread instance = RequestThread.getInstance();
         if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
@@ -81,6 +94,7 @@ public class Initialization {
                         db.itemDao().insert(obj);
 
                     }
+
                     return db.itemDao().getAll();
                 },
                 context
@@ -88,6 +102,62 @@ public class Initialization {
         RequestThread instance = RequestThread.getInstance();
         if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
+    }
+
+    public static void InitPokemonStats(Context context) {
+        // simplest thread
+        new Thread(() -> {
+            try {
+                Initialization.getPokemonStatsFromPokeApi(context);
+            } catch (IOException e) {
+                Log.e("PokeAPIERROR", "error fetching poke api", e);
+            }
+        }).start();
+    }
+
+    private static void getPokemonStatsFromPokeApi(Context context) throws IOException {
+        URL url = new URL("https://beta.pokeapi.co/graphql/v1beta");
+
+        HttpURLConnection c;
+        c = (HttpURLConnection) url.openConnection();
+        c.setRequestMethod("POST");
+        c.setDoOutput(true);
+        c.setRequestProperty("Accept","*/*");
+
+        OutputStream ostream = c.getOutputStream();
+        DataOutputStream dos = new DataOutputStream(ostream);
+        String data ="{ \"operationName\": \"getPokemonStats\", \"query\":\"query getPokemonStats { pokemons: pokemon_v2_pokemon(where:{id:{_lte: 151}},order_by:{id: asc}){name,id, height, pokemon_v2_pokemonstats{base_stat, pokemon_v2_stat{name}}}}\", \"variables\": null}";
+        dos.writeBytes(data);
+        dos.flush();
+        ostream.close();
+
+        if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            throw new IOException(c.getResponseMessage());
+        }
+
+        InputStream instream = c.getInputStream();
+        InputStreamReader isr = new InputStreamReader(instream);
+        BufferedReader br = new BufferedReader(isr);
+        String line;
+        StringBuilder response = new StringBuilder();
+        while ((line = br.readLine()) != null) {
+            response.append(line);
+        }
+        Log.i("PokeAPI", response.toString());
+
+        br.close();
+        isr.close();
+        instream.close();
+        c.disconnect();
+        JSONObject obj = null;
+        JSONArray pokemons = null;
+        try {
+            obj = new JSONObject(response.toString());
+            pokemons = obj.getJSONObject("data").getJSONArray("pokemons");
+        } catch (JSONException e) {
+            Log.e("JSONERROR", "error parsing json", e);
+        }
+        assert pokemons != null;
 
     }
 }
