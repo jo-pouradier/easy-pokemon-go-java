@@ -45,9 +45,12 @@ public class DiscoveryViewModel extends BaseObservable {
         this.onPokemonDiscoveryEndListener = onClickListener;
     }
 
-    public void onButtonClick(){
-        Log.d("PokemonDiscovery", "try to launch end of pokemon discovery listener");
-        this.onPokemonDiscoveryEndListener.onPokemonDiscoveryEnd();
+    public void onEscapeButtonClick() {
+        this.onPokemonDiscoveryEndListener.onPokemonDiscoveryEnd(null);
+    }
+
+    public void onCaptureButtonClick(){
+        this.onPokemonDiscoveryEndListener.onPokemonDiscoveryEnd(this.pokemon.getOrder());
     }
 
 }

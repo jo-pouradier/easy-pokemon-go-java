@@ -6,26 +6,57 @@
         <variable name="discoveryViewModel"
             type="com.example.pokemongeo_tp.DiscoveryViewModel"/>
     </data>
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context=".DiscoveryFragment">
-
-
-    <!--    add button to click on -->
-
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="34dp"
-        android:text="@{discoveryViewModel.name}"
-        tools:text="test" />
+        android:layout_height="match_parent"
+        tools:context=".DiscoveryFragment">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="92dp"
-        android:onClick="@{() -> discoveryViewModel.onButtonClick()}"
-        android:text="@string/catchPokemon"
-        app:layout_constraintEnd_toEndOf="parent" />
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <!-- Pokemon Image -->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@{discoveryViewModel.name}"
+                android:src="@{discoveryViewModel.pokemonImg}" />
+
+            <!-- Pokemon Stats -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@{discoveryViewModel.pokemonType1}" />
+
+            <!-- Buttons at the bottom -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <!--                android:layout_marginTop="32dp">-->
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:onClick="@{() -> discoveryViewModel.onEscapeButtonClick()}"
+                    android:text="@string/escape" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:onClick="@{() -> discoveryViewModel.onCaptureButtonClick()}"
+                    android:text="@string/catchPokemon" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
 </layout>

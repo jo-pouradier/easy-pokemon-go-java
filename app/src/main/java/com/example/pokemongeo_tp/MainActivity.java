@@ -17,8 +17,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.example.pokemongeo_tp.database.Database;
 import com.example.pokemongeo_tp.database.Initialization;
 import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
+import com.example.pokemongeo_tp.entities.PokemonEntity;
+import com.example.pokemongeo_tp.threading.RequestPromise;
+import com.example.pokemongeo_tp.threading.RequestThread;
+import com.example.pokemongeo_tp.threading.ThreadEventListener;
 import com.google.android.material.navigation.NavigationBarView;
 
 import org.osmdroid.util.GeoPoint;
@@ -88,8 +93,26 @@ public class MainActivity extends AppCompatActivity {
 
     public final onPokemonDiscoveryEndListener pokemonDiscoveryEndListener = new onPokemonDiscoveryEndListener(){
         @Override
-        public void onPokemonDiscoveryEnd(){
+        public void onPokemonDiscoveryEnd(Integer pokemonId){
             Log.d("PokemonDiscoveryEnd", "end of discovery, change view");
+            if (pokemonId != null) {
+
+                ThreadEventListener<Void> listener = ListenerFactory.getVoidListener();
+                RequestPromise<Integer, Void> promise = new RequestPromise<>(
+                        listener,
+                        (Integer pokeId) -> {
+                            // create context
+                            Database db = Database.getInstance(binding.getRoot().getContext());
+                            PokemonEntity capturedPokemon = db.pokemonDao().getPokemonById(pokeId);
+                            // TODO: set own pokemon
+                            return null;
+                        },
+                        pokemonId
+                );
+                RequestThread instance = RequestThread.getInstance();
+                instance.addRequest(promise);
+
+            }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mapfragment).commit();
         }
     };

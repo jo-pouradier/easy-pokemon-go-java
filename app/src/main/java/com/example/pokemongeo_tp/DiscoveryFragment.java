@@ -33,17 +33,9 @@ public class DiscoveryFragment extends Fragment {
         discoveryViewModel.setOnClickListener(listener);
         FragmentDiscoveryBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_discovery, container, false);
-        // set onClick on button
         binding.setDiscoveryViewModel(discoveryViewModel);
 
         return binding.getRoot();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-//        discoveryViewModel = new ViewModelProvider(this).get(DiscoveryViewModel.class);
-        // TODO: Use the ViewModel
     }
 
     public void setPokemon(Pokemon pokemon) {
