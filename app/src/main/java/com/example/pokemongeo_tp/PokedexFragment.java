@@ -81,7 +81,6 @@ public class PokedexFragment extends Fragment {
                 requireContext()
         );
         RequestThread instance = RequestThread.getInstance();
-        if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
 
         return pokeList;

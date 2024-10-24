@@ -72,7 +72,6 @@ public class InventoryFragment extends Fragment {
                 requireContext()
         );
         RequestThread instance = RequestThread.getInstance();
-        if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
 
         return ItemList;

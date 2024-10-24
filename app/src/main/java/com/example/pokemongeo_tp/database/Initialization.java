@@ -58,7 +58,6 @@ public class Initialization {
         );
 
         RequestThread instance = RequestThread.getInstance();
-        if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
     }
 
@@ -100,7 +99,6 @@ public class Initialization {
                 context
         );
         RequestThread instance = RequestThread.getInstance();
-        if (instance.isNotRunning()) instance.start();
         instance.addRequest(promise);
     }
 

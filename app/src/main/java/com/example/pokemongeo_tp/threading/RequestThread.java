@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class RequestThread extends java.lang.Thread {
     private static final int MAX_QUEUE_SIZE = 100;
     private static RequestThread instance;
-    private static boolean isRunning = false;
+    private boolean isRunning = false;
     private final LinkedBlockingQueue<RequestPromise<?,?>> queue = new LinkedBlockingQueue<>(MAX_QUEUE_SIZE);
 
     private RequestThread() {
@@ -16,7 +16,9 @@ public class RequestThread extends java.lang.Thread {
     public static RequestThread getInstance() {
         if (instance == null) {
             instance = new RequestThread();
+            instance.start();
         }
+
         return instance;
     }
 
@@ -25,10 +27,12 @@ public class RequestThread extends java.lang.Thread {
     }
 
     public boolean isNotRunning() {
+        System.out.println("get "+!isRunning);
         return !isRunning;
     }
 
     public void run() {
+        System.out.println("run ");
         isRunning = true;
         while (isRunning) {
             RequestPromise<?,?> request;
