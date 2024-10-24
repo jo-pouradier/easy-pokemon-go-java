@@ -1,8 +1,5 @@
 package com.example.pokemongeo_tp;
 
-import android.util.Log;
-import android.view.View;
-
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
@@ -17,27 +14,27 @@ public class DiscoveryViewModel extends BaseObservable {
     }
 
     @Bindable
-    public String getName(){
+    public String getName() {
         return pokemon.getName();
     }
 
     @Bindable
-    public int getPokemonImg(){
+    public int getPokemonImg() {
         return pokemon.getFrontResource();
     }
 
     @Bindable
-    public int getPokemonType1(){
+    public int getPokemonType1() {
         return pokemon.getType1Resource();
     }
 
     @Bindable
-    public int getPokemonType2Ressource(){
+    public int getPokemonType2Ressource() {
         return pokemon.getType2Ressource();
     }
 
     @Bindable
-    public POKEMON_TYPE getPokemonType2(){
+    public POKEMON_TYPE getPokemonType2() {
         return pokemon.getType2();
     }
 
@@ -49,7 +46,7 @@ public class DiscoveryViewModel extends BaseObservable {
         this.onPokemonDiscoveryEndListener.onPokemonDiscoveryEnd(null);
     }
 
-    public void onCaptureButtonClick(){
+    public void onCaptureButtonClick() {
         this.onPokemonDiscoveryEndListener.onPokemonDiscoveryEnd(this.pokemon.getOrder());
     }
 

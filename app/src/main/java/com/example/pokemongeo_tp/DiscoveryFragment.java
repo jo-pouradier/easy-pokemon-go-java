@@ -23,10 +23,6 @@ public class DiscoveryFragment extends Fragment {
     public DiscoveryFragment() {
     }
 
-    public static DiscoveryFragment newInstance() {
-        return new DiscoveryFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
