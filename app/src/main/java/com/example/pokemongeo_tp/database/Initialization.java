@@ -147,7 +147,7 @@ public class Initialization {
         isr.close();
         instream.close();
         c.disconnect();
-        JSONObject obj = null;
+        JSONObject obj;
         JSONArray pokemons = null;
         try {
             obj = new JSONObject(response.toString());
@@ -157,5 +157,29 @@ public class Initialization {
         }
         assert pokemons != null;
 
+        Database db = Database.getInstance(context);
+
+        Log.d("PokeAPI", "start parsing pokemon json stats");
+        for (int i = 0; i < pokemons.length(); i++){
+            try {
+                JSONObject pokemon = pokemons.getJSONObject(i);
+                PokemonEntity pokemonEntity = db.pokemonDao().getPokemonById(pokemon.getInt("id"));
+                JSONArray stats = pokemon.getJSONArray("pokemon_v2_pokemonstats");
+                for (int j = 0; j < stats.length(); j++){
+                    try {
+                        JSONObject stat = stats.getJSONObject(j);
+                        String statName = stat.getJSONObject("pokemon_v2_stat").getString("name");
+                        Integer statValue = stat.getInt("base_stat");
+                        String statNameProcess = statName.replace("-","_");
+                        pokemonEntity.setStat(statNameProcess, statValue);
+                        db.pokemonDao().update(pokemonEntity);
+                    } catch ( JSONException | NoSuchFieldException | IllegalAccessException e) {
+                        Log.e("JSONERROR", "error parsing json entity name: " + pokemonEntity.name , e);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e("JSONERROR", "error parsing json", e);
+            }
+        }
     }
 }
