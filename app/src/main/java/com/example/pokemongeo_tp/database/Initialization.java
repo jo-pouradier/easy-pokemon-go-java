@@ -147,7 +147,7 @@ public class Initialization {
         isr.close();
         instream.close();
         c.disconnect();
-        JSONObject obj = null;
+        JSONObject obj;
         JSONArray pokemons = null;
         try {
             obj = new JSONObject(response.toString());
