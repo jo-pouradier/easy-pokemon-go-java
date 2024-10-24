@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         // init database
         Initialization.InitPokemon(this);
         Initialization.InitObject(this);
+        Initialization.InitPokemonStats(this);
 
         // setup bottom navigation bar
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
