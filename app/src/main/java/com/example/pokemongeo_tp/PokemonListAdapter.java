@@ -37,6 +37,7 @@ public class PokemonListAdapter extends
                 LayoutInflater.from(parent.getContext()),
                 R.layout.pokemon_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(binding);
+
         viewHolder.setOnClickOnPokemonListener(listener);
         return viewHolder;
     }
@@ -44,6 +45,7 @@ public class PokemonListAdapter extends
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Pokemon pokemon = pokemonList.get(position);
+
         if (pokemon.isDiscovered()) {
             holder.viewModel.setPokemon(pokemon);
         } else {

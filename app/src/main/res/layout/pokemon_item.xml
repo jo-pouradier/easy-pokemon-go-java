@@ -10,7 +10,7 @@
     </data>
   <androidx.cardview.widget.CardView
         android:layout_margin="5dp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +22,7 @@
       <androidx.constraintlayout.widget.ConstraintLayout
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:background="#FF00FF"
+          android:background="#0080e9"
           android:orientation="vertical"
           android:padding="4dp">
 
@@ -35,67 +35,67 @@
               android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.front)}"
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintStart_toStartOf="parent"
-              tools:src="@drawable/p6"
-              tools:ignore="MissingConstraints" />
+              tools:ignore="MissingConstraints"
+              tools:src="@drawable/p6" />
 
           <TextView
               android:id="@+id/name"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginEnd="12dp"
               android:text="@{pokemonViewModel.name}"
               android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-              app:layout_constraintBottom_toTopOf="@id/type1_text"
-              app:layout_constraintEnd_toStartOf="@+id/number"
+              app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintHorizontal_bias="0.5"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/front"
               tools:text="Pikachu" />
 
-          <TextView
-              android:id="@+id/type1_text"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:text="@{pokemonViewModel.type1}"
+          <!--          <TextView-->
+          <!--              android:id="@+id/type1_text"-->
+          <!--              android:layout_width="0dp"-->
+          <!--              android:layout_height="wrap_content"-->
+          <!--              android:text="@{pokemonViewModel.type1}"-->
+          <!--              app:layout_constraintBottom_toTopOf="@id/separator"-->
+          <!--              app:layout_constraintEnd_toStartOf="@id/type2_text"-->
+          <!--              app:layout_constraintStart_toEndOf="@id/front"-->
+          <!--              app:layout_constraintTop_toBottomOf="@id/name"-->
+          <!--              tools:text="Feu" />-->
+
+          <!--          <TextView-->
+          <!--              android:id="@+id/type2_text"-->
+          <!--              android:layout_width="0dp"-->
+          <!--              android:layout_height="wrap_content"-->
+          <!--              android:text="@{pokemonViewModel.type2}"-->
+          <!--              app:layout_constraintBottom_toTopOf="@id/separator"-->
+          <!--              app:layout_constraintEnd_toStartOf="@id/number"-->
+          <!--              app:layout_constraintStart_toEndOf="@id/type1_text"-->
+          <!--              app:layout_constraintTop_toBottomOf="@id/name"-->
+          <!--              tools:text="vol" />-->
+
+          <ImageView
+              android:id="@+id/type1_image"
+              android:layout_width="40dp"
+              android:layout_height="40dp"
+              android:layout_marginStart="12dp"
+              android:layout_marginEnd="87dp"
+              android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.type1Resource)}"
               app:layout_constraintBottom_toTopOf="@id/separator"
-              app:layout_constraintEnd_toStartOf="@id/type2_text"
-              app:layout_constraintStart_toEndOf="@id/front"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/name"
-              tools:text="Feu" />
+              app:layout_constraintVertical_bias="0.0"
+              tools:src="@drawable/feu" />
 
-<!--          <ImageView-->
-<!--              android:id="@+id/type1_image"-->
-<!--              android:layout_width="40dp"-->
-<!--              android:layout_height="40dp"-->
-<!--              android:layout_marginEnd="10dp"-->
-<!--              android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.type1Resource)}"-->
-<!--              app:layout_constraintBottom_toTopOf="@id/separator"-->
-<!--              app:layout_constraintEnd_toStartOf="@id/type2_text"-->
-<!--              app:layout_constraintStart_toStartOf="parent"-->
-<!--              app:layout_constraintTop_toBottomOf="@id/name"-->
-<!--              tools:src="@drawable/feu" />-->
-
-          <TextView
-              android:id="@+id/type2_text"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:text="@{pokemonViewModel.type2}"
+          <ImageView
+              android:id="@+id/type2_image"
+              android:layout_width="40dp"
+              android:layout_height="40dp"
+              android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.type2Ressource)}"
               app:layout_constraintBottom_toTopOf="@id/separator"
-              app:layout_constraintEnd_toStartOf="@id/number"
-              app:layout_constraintStart_toEndOf="@id/type1_text"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toEndOf="@+id/type1_image"
               app:layout_constraintTop_toBottomOf="@id/name"
-              tools:text="vol" />
-
-<!--          <ImageView-->
-<!--              android:id="@+id/type2_image"-->
-<!--              android:layout_width="40dp"-->
-<!--              android:layout_height="40dp"-->
-<!--              android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.type2Ressource)}"-->
-<!--              app:layout_constraintBottom_toTopOf="@id/separator"-->
-<!--              app:layout_constraintEnd_toEndOf="parent"-->
-<!--              app:layout_constraintStart_toEndOf="@+id/type1_image"-->
-<!--              app:layout_constraintTop_toBottomOf="@id/name"-->
-<!--              tools:src="@drawable/vol" />-->
+              tools:src="@drawable/vol" />
 
 
           <TextView
@@ -104,8 +104,8 @@
               android:layout_height="wrap_content"
               android:text="@{pokemonViewModel.number}"
               android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-              app:layout_constraintBottom_toTopOf="@id/separator"
               app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toEndOf="@+id/front"
               app:layout_constraintTop_toTopOf="parent"
               tools:text="#6" />
 
