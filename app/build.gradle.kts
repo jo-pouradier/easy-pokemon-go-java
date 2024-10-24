@@ -36,6 +36,8 @@ android {
 
 dependencies {
     implementation(libs.osmdroid.android)
+    implementation(libs.cardview)
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

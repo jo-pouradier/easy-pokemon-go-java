@@ -106,6 +106,7 @@ public class Pokemon {
     }
 
     public int getFrontResource() {
+
         return frontResource;
     }
 

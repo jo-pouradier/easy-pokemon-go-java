@@ -3,7 +3,6 @@ package com.example.pokemongeo_tp.database;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.pokemongeo_tp.entities.InventoryEntity;
 import com.example.pokemongeo_tp.entities.ItemEntity;
 import com.example.pokemongeo_tp.entities.PokemonEntity;
 import com.example.pokemongeo_tp.threading.RequestPromise;
@@ -71,22 +70,16 @@ public class Initialization {
                         obj.item_id = 1;
                         obj.name = "Pokeball";
                         obj.image = "pokeball";
+                        obj.quantity = 10;
                         db.itemDao().insert(obj);
 
                         obj = new ItemEntity();
                         obj.item_id = 2;
                         obj.name = "Potion";
                         obj.image = "potion";
+                        obj.quantity = 10;
                         db.itemDao().insert(obj);
 
-                    }
-                    if (db.inventoryDao().getAll().isEmpty()) {
-                        List<ItemEntity> itemList = db.itemDao().getAll();
-                        List<InventoryEntity> invList = new ArrayList<InventoryEntity>();
-                        for (ItemEntity item : itemList) {
-                            invList.add(new InventoryEntity(item.item_id, item.item_id, 100));
-                        }
-                        db.inventoryDao().insert(invList);
                     }
                     return db.itemDao().getAll();
                 },

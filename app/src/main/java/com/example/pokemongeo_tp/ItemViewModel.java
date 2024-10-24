@@ -17,4 +17,7 @@ public class ItemViewModel extends BaseObservable {
     @Bindable
     public String getName() {return item.getName();
     }
+
+    @Bindable
+    public  String getQuantity(){ return "X " + item.getQuantity();   }
 }

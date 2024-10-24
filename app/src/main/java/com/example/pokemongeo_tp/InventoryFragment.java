@@ -54,7 +54,7 @@ public class InventoryFragment extends Fragment {
                     public void OnEventInThread(List<ItemEntity> data) {
                         for (ItemEntity item : data) {
                             // map pokemon with pokemonEntity
-                            ItemList.add(new Item(item,10));
+                            ItemList.add(new Item(item));
                         }
                         // refresh view
                         binding.itemList.setAdapter(adapter);

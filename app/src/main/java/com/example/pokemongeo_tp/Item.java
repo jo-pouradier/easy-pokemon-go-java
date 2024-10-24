@@ -21,21 +21,19 @@ public class Item {
         this.id = id;
         this.quantity = quantity;
     }
-    public Item(ItemEntity item,int quantity) {
-        this.name = item.name;
-        this.image = item.image;
-        this.id = item.item_id;
-        this.quantity = quantity;
 
-    }
     public Item(ItemEntity item) {
         this.name = item.name;
         this.image = item.image;
         this.id = item.item_id;
-        this.quantity = 0;
+        this.quantity = item.quantity;
     }
-        public String getName(){
-        return this.name;
+    public String getName(){
+        return name;
+    }
+
+    public int getQuantity(){
+        return quantity;
     }
 
 }

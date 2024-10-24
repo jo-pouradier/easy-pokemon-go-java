@@ -11,4 +11,5 @@ public class ItemEntity {
     public int item_id;
     public String name;
     public String image;
+    public int quantity;
 }
