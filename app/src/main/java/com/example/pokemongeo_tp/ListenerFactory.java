@@ -2,14 +2,16 @@ package com.example.pokemongeo_tp;
 
 import androidx.fragment.app.FragmentManager;
 
+import com.example.pokemongeo_tp.databinding.MapFragmentBinding;
+import com.example.pokemongeo_tp.databinding.StarterFragmentBinding;
 import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
 public class ListenerFactory {
-    public OnSelectStarterListener getOnSelectStarterListener(FragmentManager manager) {
+    public static OnSelectStarterListener getOnSelectStarterListener(StarterFragmentBinding binding) {
         return new OnSelectStarterListener() {
             @Override
             public void onSelectStarter(Pokemon pokemon) {
-                StarterFragment.SelectStarter(pokemon, manager);
+                StarterFragment.SelectStarter(pokemon, binding);
             }
         };
     }

@@ -7,6 +7,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -17,8 +19,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.example.pokemongeo_tp.database.Database;
 import com.example.pokemongeo_tp.database.Initialization;
 import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
+import com.example.pokemongeo_tp.entities.OwnPokemonEntity;
+import com.example.pokemongeo_tp.entities.PokemonEntity;
+import com.example.pokemongeo_tp.threading.RequestPromise;
+import com.example.pokemongeo_tp.threading.RequestThread;
+import com.example.pokemongeo_tp.threading.ThreadEventListener;
 import com.google.android.material.navigation.NavigationBarView;
 
 import org.osmdroid.util.GeoPoint;
@@ -28,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MapFragment mapfragment;
     private GeoPoint playerLocation;
+    private ActivityMainBinding binding;
     private final LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
@@ -104,6 +113,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public final OnSelectStarterListener SelectStarterListener = new OnSelectStarterListener(){
+        @Override
+        public void onSelectStarter(Pokemon pokemon){
+            RequestPromise<Context, PokemonEntity> promise = new RequestPromise<>(
+                    new ThreadEventListener<PokemonEntity>() {
+                        @Override
+                        public void OnEventInThread(PokemonEntity data) {
+                            // refresh view
+                            binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                        }
+
+                        @Override
+                        public void OnEventInThreadReject(String error) {
+                            Log.e("ERROR", "while creating pokemon from PokemonEntity. "+ error);
+                        }
+                    },
+                    (Context context) -> {
+                        Database db = Database.getInstance(context);
+                        PokemonEntity pokeEntity = db.pokemonDao().getPokemonByName(pokemon.getName());
+                        OwnPokemonEntity pokeOwn = new OwnPokemonEntity(pokeEntity);
+                        db.ownPokemonDao().insert(pokeOwn);
+                        return pokeEntity;
+
+                    },
+                    requireContext()
+            );
+            RequestThread instance = RequestThread.getInstance();
+            instance.addRequest(promise);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,9 +153,10 @@ public class MainActivity extends AppCompatActivity {
         Initialization.InitPokemonStats(this);
 
         // setup bottom navigation bar
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
-        binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        this.binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
+        // TODO Check if we have pokemon starter in inventory
+        this.binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
 
         // check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

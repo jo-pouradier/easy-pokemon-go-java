@@ -17,13 +17,15 @@ public class PokemonListAdapter extends
 
     List<Pokemon> pokemonList;
 
-    private OnClickOnPokemonListener listener;
-
+    private OnClickOnPokemonListener CLicklistener;
+    private OnSelectStarterListener selectStarterListener;
     public void setOnClickOnPokemonListener(OnClickOnPokemonListener listener) {
-        this.listener = listener;
+        this.CLicklistener = listener;
 
     }
-
+    public void setOnSelectStarterListener(OnSelectStarterListener listener) {
+        this.selectStarterListener = listener;
+    }
 
     public PokemonListAdapter(List<Pokemon> pokemonList) {
         assert pokemonList != null;
@@ -38,7 +40,7 @@ public class PokemonListAdapter extends
                 R.layout.pokemon_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(binding);
 
-        viewHolder.setOnClickOnPokemonListener(listener);
+        viewHolder.setOnClickOnPokemonListener(CLicklistener);
         return viewHolder;
     }
 

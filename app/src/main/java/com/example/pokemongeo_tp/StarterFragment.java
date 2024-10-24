@@ -49,8 +49,8 @@ public class StarterFragment extends Fragment {
         pokemonList = createStarterList(binding);
         adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonList.setAdapter(adapter);
-        SelectStarterListener listener = ListenerFactory.getOnClickOnPokemonListener(this.getParentFragmentManager());
-        adapter.setOnClickOnPokemonListener(listener);
+        OnSelectStarterListener listener = ListenerFactory.getOnSelectStarterListener(this.getParentFragmentManager());
+        adapter.setOnSelectStarterListener(listener);
         return binding.getRoot();
     }
 
@@ -95,38 +95,10 @@ public class StarterFragment extends Fragment {
      * @param pokemon Pokemon à afficher (donner par le listener)
      * @param manager FragmentManager de la mainActivity
      */
-    public void SelectStarter(Pokemon pokemon, FragmentManager manager) {
+    public static void SelectStarter(Pokemon pokemon, FragmentManager manager) {
         FragmentTransaction transaction = manager.beginTransaction();
         PokedexFragment fragment = new PokedexFragment();
-        RequestPromise<Context, PokemonEntity> promise = new RequestPromise<>(
-                new ThreadEventListener<PokemonEntity>() {
-                    @Override
-                    public void OnEventInThread(PokemonEntity data) {
-                        // refresh view
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            transaction.replace(R.id.fragment_container, fragment);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                        });
-                    }
 
-                    @Override
-                    public void OnEventInThreadReject(String error) {
-                        Log.e("ERROR", "while creating pokemon from PokemonEntity. "+ error);
-                    }
-                },
-                (Context context) -> {
-                    Database db = Database.getInstance(context);
-                    PokemonEntity pokeEntity = db.pokemonDao().getPokemonByName(pokemon.getName());
-                    OwnPokemonEntity pokeOwn = new OwnPokemonEntity(pokeEntity);
-                    db.ownPokemonDao().insert(pokeOwn);
-                    return pokeEntity;
-
-                },
-                requireContext()
-        );
-        RequestThread instance = RequestThread.getInstance();
-        instance.addRequest(promise);
 
     }
 
