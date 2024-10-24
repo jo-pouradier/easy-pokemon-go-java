@@ -1,6 +1,7 @@
 package com.example.pokemongeo_tp.dao;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.pokemongeo_tp.entities.OwnPokemonEntity;
@@ -21,5 +22,8 @@ public interface OwnPokemonDao {
 
     @Query("SELECT * FROM own_pokemon WHERE name = :name")
     OwnPokemonEntity getOwnPokemonByName(String name);
+
+    @Insert
+    void insert(OwnPokemonEntity ownPokemon);
 
 }
