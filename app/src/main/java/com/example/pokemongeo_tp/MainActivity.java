@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public OnSelectStarterListener selectStarterListener;
+    public OnClickOnPokemonListener selectStarterListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,13 +137,16 @@ public class MainActivity extends AppCompatActivity {
                 new ThreadEventListener<List<PokemonEntity>>() {
                     @Override
                     public void OnEventInThread(List<PokemonEntity> data) {
-                        if (!data.isEmpty()) {
+                        Log.i("Starter", "in activity starter " + data.isEmpty());
+                        if (data.isEmpty()) {
+                            Log.i("Starter", "in activity  starter");
                             binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
-                            Log.i("Starter","in activity  starter");
+
                         } else {
                             StarterFragment fragment = new StarterFragment();
                             fragment.setPokemonList(data);
-                            Log.i("Starter","in activity no starter");
+                            Log.i("Starter", data.toString());
+                            Log.i("Starter", "in activity no starter");
                             fragment.setSelectStarterListener(selectStarterListener);
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
                                     .commit();
@@ -159,7 +162,9 @@ public class MainActivity extends AppCompatActivity {
                 {
                     Database db = Database.getInstance(context);
                     if (db.ownPokemonDao().getAll().isEmpty()) {
-                        return db.pokemonDao().getStarterPokemon();
+                        List<PokemonEntity> data = db.pokemonDao().getStarterPokemon();
+                        Log.i("Starter", "in resquest starter " + data);
+                        return data;
                     }
                     return new ArrayList<PokemonEntity>();
                 },
@@ -196,9 +201,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Context context = this.getApplicationContext();
-        selectStarterListener = new OnSelectStarterListener() {
+        selectStarterListener = new OnClickOnPokemonListener() {
             @Override
-            public void onSelectStarter(Pokemon pokemon) {
+            public void onClickOnPokemon(Pokemon pokemon) {
                 RequestPromise<Context, Void> promise = new RequestPromise<>(
                         new ThreadEventListener<Void>() {
                             @Override
@@ -225,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 instance.addRequest(promise);
             }
         }
+
 
         ;
     }

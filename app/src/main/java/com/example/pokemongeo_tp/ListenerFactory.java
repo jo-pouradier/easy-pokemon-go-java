@@ -1,5 +1,7 @@
 package com.example.pokemongeo_tp;
 
+import android.util.Log;
+
 import androidx.fragment.app.FragmentManager;
 
 import com.example.pokemongeo_tp.databinding.MapFragmentBinding;
@@ -8,10 +10,11 @@ import com.example.pokemongeo_tp.threading.ThreadEventListener;
 
 public class ListenerFactory {
 
-    public static OnClickOnPokemonListener getOnClickOnPokemonListener(FragmentManager manager) {
+    public static OnClickOnPokemonListener getOnClickOnPokemonDetailsListener(FragmentManager manager) {
         return new OnClickOnPokemonListener() {
             @Override
             public void onClickOnPokemon(Pokemon pokemon) {
+                Log.i("Starter","in listener "+manager.getFragments());
                 if (pokemon.isDiscovered()){
                     PokedexFragment.showPokemonDetails(pokemon, manager);
                 }

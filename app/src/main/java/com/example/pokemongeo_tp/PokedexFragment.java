@@ -48,7 +48,7 @@ public class PokedexFragment extends Fragment {
         pokemonList = createPokemonList(binding);
         adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonList.setAdapter(adapter);
-        OnClickOnPokemonListener listener = ListenerFactory.getOnClickOnPokemonListener(this.getParentFragmentManager());
+        OnClickOnPokemonListener listener = ListenerFactory.getOnClickOnPokemonDetailsListener(this.getParentFragmentManager());
         adapter.setOnClickOnPokemonListener(listener);
         return binding.getRoot();
     }

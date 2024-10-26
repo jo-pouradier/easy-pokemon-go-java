@@ -23,7 +23,7 @@ public class StarterFragment extends Fragment {
 
     List<Pokemon> pokemonList = new ArrayList<>();
     PokemonListAdapter adapter;
-    OnSelectStarterListener selectStarterListner;
+    OnClickOnPokemonListener selectStarterListner;
 
     public void setPokemonList(List<PokemonEntity> pokemonList) {
         for (PokemonEntity poke : pokemonList) {
@@ -31,7 +31,7 @@ public class StarterFragment extends Fragment {
         }
     }
 
-    public void setSelectStarterListener(OnSelectStarterListener listner) {
+    public void setSelectStarterListener(OnClickOnPokemonListener listner) {
         this.selectStarterListner = listner;
     }
 
@@ -48,7 +48,7 @@ public class StarterFragment extends Fragment {
 
         adapter = new PokemonListAdapter(pokemonList);
         binding.pokemonStarterList.setAdapter(adapter);
-        adapter.setOnSelectStarterListener(selectStarterListner);
+        adapter.setOnClickOnPokemonListener(selectStarterListner);
         return binding.getRoot();
     }
 }
