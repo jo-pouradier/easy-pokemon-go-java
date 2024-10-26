@@ -31,6 +31,9 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,13 +57,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
 
         @Override
-        public void onProviderEnabled(@NonNull String provider) {}
+        public void onProviderEnabled(@NonNull String provider) {
+        }
 
         @Override
-        public void onProviderDisabled(@NonNull String provider) {}
+        public void onProviderDisabled(@NonNull String provider) {
+        }
     };
     private final NavigationBarView.OnItemSelectedListener navigationBarListener = new NavigationBarView.OnItemSelectedListener() {
         @Override
@@ -73,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new HomeFragment(); // Replace with your fragment class
             } else if (item.getItemId() == R.id.inventory) {
                 fragment = new InventoryFragment(); // Replace with your fragment class
-            }
-            else if (item.getItemId() == R.id.map) {
+            } else if (item.getItemId() == R.id.map) {
                 if (mapfragment == null) {
                     mapfragment = new MapFragment();
                     mapfragment.setOnLocationChanged(myLocationListener);
@@ -113,36 +118,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public final OnSelectStarterListener SelectStarterListener = new OnSelectStarterListener(){
-        @Override
-        public void onSelectStarter(Pokemon pokemon){
-            RequestPromise<Context, PokemonEntity> promise = new RequestPromise<>(
-                    new ThreadEventListener<PokemonEntity>() {
-                        @Override
-                        public void OnEventInThread(PokemonEntity data) {
-                            // refresh view
-                            binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
-                        }
+    public OnSelectStarterListener selectStarterListener;
 
-                        @Override
-                        public void OnEventInThreadReject(String error) {
-                            Log.e("ERROR", "while creating pokemon from PokemonEntity. "+ error);
-                        }
-                    },
-                    (Context context) -> {
-                        Database db = Database.getInstance(context);
-                        PokemonEntity pokeEntity = db.pokemonDao().getPokemonByName(pokemon.getName());
-                        OwnPokemonEntity pokeOwn = new OwnPokemonEntity(pokeEntity);
-                        db.ownPokemonDao().insert(pokeOwn);
-                        return pokeEntity;
-
-                    },
-                    requireContext()
-            );
-            RequestThread instance = RequestThread.getInstance();
-            instance.addRequest(promise);
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,7 +133,41 @@ public class MainActivity extends AppCompatActivity {
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         this.binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
         // TODO Check if we have pokemon starter in inventory
-        this.binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<>(
+                new ThreadEventListener<List<PokemonEntity>>() {
+                    @Override
+                    public void OnEventInThread(List<PokemonEntity> data) {
+                        if (!data.isEmpty()) {
+                            binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                            Log.i("Starter","in activity  starter");
+                        } else {
+                            StarterFragment fragment = new StarterFragment();
+                            fragment.setPokemonList(data);
+                            Log.i("Starter","in activity no starter");
+                            fragment.setSelectStarterListener(selectStarterListener);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
+                                    .commit();
+                        }
+                    }
+
+                    @Override
+                    public void OnEventInThreadReject(String error) {
+                        Log.e("ERROR", "while creating pokemon from PokemonEntity. " + error);
+                    }
+                },
+                (Context context) ->
+                {
+                    Database db = Database.getInstance(context);
+                    if (db.ownPokemonDao().getAll().isEmpty()) {
+                        return db.pokemonDao().getStarterPokemon();
+                    }
+                    return new ArrayList<PokemonEntity>();
+                },
+                this
+        );
+        RequestThread instance = RequestThread.getInstance();
+        instance.addRequest(promise);
+//        this.binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
 
         // check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -184,6 +195,38 @@ public class MainActivity extends AppCompatActivity {
             createLocationManager();
         }
 
+        Context context = this.getApplicationContext();
+        selectStarterListener = new OnSelectStarterListener() {
+            @Override
+            public void onSelectStarter(Pokemon pokemon) {
+                RequestPromise<Context, Void> promise = new RequestPromise<>(
+                        new ThreadEventListener<Void>() {
+                            @Override
+                            public void OnEventInThread(Void data) {
+                                // refresh view
+                                binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                            }
+
+                            @Override
+                            public void OnEventInThreadReject(String error) {
+                                Log.e("ERROR", "while creating pokemon from PokemonEntity. " + error);
+                            }
+                        },
+                        (Context context) -> {
+                            Database db = Database.getInstance(context);
+                            PokemonEntity pokeEntity = db.pokemonDao().getPokemonByName(pokemon.getName());
+                            OwnPokemonEntity pokeOwn = new OwnPokemonEntity(pokeEntity);
+                            db.ownPokemonDao().insert(pokeOwn);
+                            return null;
+                        }, context
+
+                );
+                RequestThread instance = RequestThread.getInstance();
+                instance.addRequest(promise);
+            }
+        }
+
+        ;
     }
 
     public void createLocationManager() {

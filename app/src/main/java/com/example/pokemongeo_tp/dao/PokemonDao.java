@@ -33,7 +33,7 @@ public interface PokemonDao {
     @Update
     void update(PokemonEntity pokemon);
 
-    @Query("SELECT * FROM pokemon WHERE id = 1, id = 4, id = 7")
+    @Query("SELECT * FROM pokemon WHERE id = 1 and id = 4 and id = 7")
     List<PokemonEntity> getStarterPokemon();
 
 }
