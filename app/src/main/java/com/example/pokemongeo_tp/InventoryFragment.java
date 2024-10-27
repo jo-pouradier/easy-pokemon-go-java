@@ -2,6 +2,8 @@ package com.example.pokemongeo_tp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +59,9 @@ public class InventoryFragment extends Fragment {
                             ItemList.add(new Item(item));
                         }
                         // refresh view
-                        binding.itemList.setAdapter(adapter);
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            binding.itemList.setAdapter(adapter);
+                        });
                     }
 
                     @Override

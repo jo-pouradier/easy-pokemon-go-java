@@ -176,8 +176,12 @@ public class MapFragment extends Fragment {
                     }
                 },
                 (Integer numberPokemon) -> {
-                    Database db = Database.getInstance(getContext());
                     List<PokemonMarkerData> threadDataPokemonMarker = new ArrayList<>();
+                    if (binding == null || playerLocation == null) {
+                        return threadDataPokemonMarker;
+                    }
+
+                    Database db = Database.getInstance(getContext());
                     for (int i = 0; i < numberPokemon; i++) {
                         // create a random position in a circle of 100 meters of the player
                         double angleDegree = Math.random() * 360; // angle in degrees
@@ -198,7 +202,8 @@ public class MapFragment extends Fragment {
                             Log.e("ERROR", "error while getting image: " + e.getMessage());
                             iconID = R.drawable.normal;
                         }
-                        Drawable icon = ContextCompat.getDrawable(requireContext(), iconID);marker.setIcon(icon);
+                        Drawable icon = ContextCompat.getDrawable(requireContext(), iconID);
+                        marker.setIcon(icon);
 
                         // save data for onResume
                         threadDataPokemonMarker.add(new PokemonMarkerData(

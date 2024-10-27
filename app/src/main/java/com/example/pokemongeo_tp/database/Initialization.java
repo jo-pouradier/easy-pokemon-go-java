@@ -3,6 +3,7 @@ package com.example.pokemongeo_tp.database;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.pokemongeo_tp.ListenerFactory;
 import com.example.pokemongeo_tp.entities.ItemEntity;
 import com.example.pokemongeo_tp.entities.PokemonEntity;
 import com.example.pokemongeo_tp.threading.RequestPromise;
@@ -104,16 +105,23 @@ public class Initialization {
 
     public static void InitPokemonStats(Context context) {
         // simplest thread
-        new Thread(() -> {
-            try {
-                Initialization.getPokemonStatsFromPokeApi(context);
-            } catch (IOException e) {
-                Log.e("PokeAPIERROR", "error fetching poke api", e);
-            }
-        }).start();
+        RequestPromise<Context, Void> promise = new RequestPromise<>(
+                ListenerFactory.getVoidListener(),
+                (Context ctx) -> {
+                    try {
+                        Initialization.getPokemonStatsFromPokeApi(ctx);
+                    } catch (IOException e) {
+                        Log.e("PokeAPI", "error fetching poke api", e);
+                    }
+                    return null;
+                },
+                context);
+        RequestThread instance = RequestThread.getInstance();
+        instance.addRequest(promise);
     }
 
     private static void getPokemonStatsFromPokeApi(Context context) throws IOException {
+        Log.d("PokeAPI", "start fetching pokemon stats");
         URL url = new URL("https://beta.pokeapi.co/graphql/v1beta");
 
         HttpURLConnection c;
@@ -188,5 +196,6 @@ public class Initialization {
                 Log.e("JSONERROR", "error parsing json", e);
             }
         }
+        Log.d("PokeAPI", "end parsing pokemon json stats");
     }
 }

@@ -7,6 +7,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     public OnClickOnPokemonListener selectStarterListener;
     private MapFragment mapfragment;
+    private StarterFragment starterFragment = null;
     private GeoPoint playerLocation;
     private final LocationListener myLocationListener = new LocationListener() {
         @Override
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
     };
+
     private final NavigationBarView.OnItemSelectedListener navigationBarListener = new NavigationBarView.OnItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -166,32 +170,29 @@ public class MainActivity extends AppCompatActivity {
         Initialization.InitPokemonStats(this);
         Initialization.InitObject(this);
 
-        // TODO: sometimes the request is not finished before the activity is created
-        //  and create an error with the starter fragment
-        //  wait for the request to be finished before creating the activity
-        //  may need a loading screen
+        //set view to loading screen
+        Log.d("Loading", "loading screen");
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoadingFragment()).commit();
 
-        // setup bottom navigation bar
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
-        // TODO Check if we have pokemon starter in inventory
-        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<>(
+
+        RequestPromise<Context, List<PokemonEntity>> promiseStarterInit = new RequestPromise<>(
                 new ThreadEventListener<List<PokemonEntity>>() {
                     @Override
                     public void OnEventInThread(List<PokemonEntity> data) {
                         Log.i("Starter", "in activity starter " + data.isEmpty());
                         if (data.isEmpty()) {
                             Log.i("Starter", "in activity  starter");
+                            binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
                             binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
 
                         } else {
-                            StarterFragment fragment = new StarterFragment();
-                            fragment.setPokemonList(data);
                             Log.i("Starter", data.toString());
                             Log.i("Starter", "in activity no starter");
-                            fragment.setSelectStarterListener(selectStarterListener);
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
-                                    .commit();
+                            StarterFragment starterFragment = new StarterFragment();
+                            starterFragment.setPokemonList(data);
+                            starterFragment.setSelectStarterListener(selectStarterListener);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, starterFragment).commit();
                         }
                     }
 
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     Database db = Database.getInstance(context);
                     if (db.ownPokemonDao().getAll().isEmpty()) {
                         List<PokemonEntity> data = db.pokemonDao().getStarterPokemon();
-                        Log.i("Starter", "in resquest starter " + data);
+                        Log.i("Starter", "in request starter " + data);
                         return data;
                     }
                     return new ArrayList<>();
@@ -213,8 +214,7 @@ public class MainActivity extends AppCompatActivity {
                 this
         );
         RequestThread instance = RequestThread.getInstance();
-        instance.addRequest(promise);
-//        this.binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+        instance.addRequest(promiseStarterInit);
 
         // check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -250,8 +250,11 @@ public class MainActivity extends AppCompatActivity {
                         new ThreadEventListener<Void>() {
                             @Override
                             public void OnEventInThread(Void data) {
-                                // refresh view
-                                binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                                // refresh view in MainLooper
+                                new Handler(Looper.getMainLooper()).post(() -> {
+                                    binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
+                                    binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                                });
                             }
 
                             @Override
@@ -265,8 +268,8 @@ public class MainActivity extends AppCompatActivity {
                             OwnPokemonEntity pokeOwn = new OwnPokemonEntity(pokeEntity);
                             db.ownPokemonDao().insert(pokeOwn);
                             return null;
-                        }, context
-
+                        },
+                        context
                 );
                 RequestThread instance = RequestThread.getInstance();
                 instance.addRequest(promise);
