@@ -38,17 +38,18 @@ public class Pokemon {
         this.discovered = poke.discovered;
 
         try {
-            this.type1Resource = R.drawable.class.getDeclaredField(poke.type_1.toLowerCase()).getInt(null);
+            this.type1Resource = R.drawable.class.getDeclaredField(poke.type_1.toLowerCase()).getInt(-1);
         } catch (Exception e) {
             this.type1Resource = R.drawable.feu;
         }
         try {
             if (poke.type_2 != null) {
                 this.type2 = POKEMON_TYPE.valueOf(poke.type_2);
-                this.type2Ressource = R.drawable.class.getDeclaredField(poke.type_2.toLowerCase()).getInt(null);
+                this.type2Ressource = R.drawable.class.getDeclaredField(poke.type_2.toLowerCase()).getInt(-1);
             } else {
                 this.type2 = null;
-                this.type2Ressource = R.drawable.normal;
+                this.type2Ressource = -1;
+
             }
         } catch (Exception e) {
             this.type2Ressource = R.drawable.normal;

@@ -15,6 +15,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.pokemongeo_tp.database.Database;
@@ -41,8 +42,8 @@ public class PokedexFragment extends Fragment {
 
         PokedexFragmentBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.pokedex_fragment, container, false);
-        binding.pokemonList.setLayoutManager(new LinearLayoutManager(
-                binding.getRoot().getContext()));
+        binding.pokemonList.setLayoutManager(new GridLayoutManager(
+                binding.getRoot().getContext(),3));
 
         pokemonList = createPokemonList(binding);
         adapter = new PokemonListAdapter(pokemonList);
