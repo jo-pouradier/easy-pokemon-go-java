@@ -9,6 +9,10 @@ public class Pokemon {
     private String name;
     private int height;
     private int weight;
+
+
+
+    private int captureRate;
     private int frontResource;
     private POKEMON_TYPE type1;
     private int type1Resource;
@@ -36,6 +40,9 @@ public class Pokemon {
         this.name = poke.name;
         this.type1 = POKEMON_TYPE.valueOf(poke.type_1);
         this.discovered = poke.discovered;
+        this.height = poke.height;
+        this.weight = poke.weight;
+        this.captureRate = poke.capture_rate;
 
         try {
             this.type1Resource = R.drawable.class.getDeclaredField(poke.type_1.toLowerCase()).getInt(-1);
@@ -90,6 +97,9 @@ public class Pokemon {
         this.order = order;
     }
 
+    public int getCaptureRate() {
+        return captureRate;
+    }
     public int getHeight() {
         return height;
     }

@@ -23,26 +23,82 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@{discoveryViewModel.name}"
-                android:src="@{discoveryViewModel.pokemonImg}" />
+                android:src="@{discoveryViewModel.getImage(discoveryViewModel.pokemonImg)}" />
 
-            <!-- Pokemon Stats -->
-            <TextView
+            <!-- Pokemon Stats as table-->
+            <TableLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="@{discoveryViewModel.pokemonType1}" />
+                android:gravity="center">
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/name" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{discoveryViewModel.name}" />
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/captureRate" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{discoveryViewModel.captureRate}" />
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/weight" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{discoveryViewModel.weight}" />
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/type" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{discoveryViewModel.pokemonType1}" />
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/type" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{discoveryViewModel.pokemonType2}" />
+                </TableRow>
+            </TableLayout>
 
             <!-- Buttons at the bottom -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:gravity="center"
+                android:layout_gravity="fill_horizontal"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal">
                 <!--                android:layout_marginTop="32dp">-->
 
                 <Button
+                    style="@style/Base.CardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
@@ -50,6 +106,7 @@
                     android:text="@string/escape" />
 
                 <Button
+                    style="@style/Base.CardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"

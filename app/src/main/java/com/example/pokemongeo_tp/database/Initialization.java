@@ -124,7 +124,7 @@ public class Initialization {
 
         OutputStream ostream = c.getOutputStream();
         DataOutputStream dos = new DataOutputStream(ostream);
-        String data ="{ \"operationName\": \"getPokemonStats\", \"query\":\"query getPokemonStats { pokemons: pokemon_v2_pokemon(where:{id:{_lte: 151}},order_by:{id: asc}){name,id, height, pokemon_v2_pokemonstats{base_stat, pokemon_v2_stat{name}}}}\", \"variables\": null}";
+        String data ="{ \"operationName\": \"getPokemonStats\", \"query\":\"query getPokemonStats { pokemons: pokemon_v2_pokemon(where:{id:{_lte: 151}},order_by:{id: asc}){name,id, height, weight, pokemon_v2_pokemonstats{base_stat, pokemon_v2_stat{name}}, pokemon_v2_pokemonspecy{capture_rate}}}\", \"variables\": null}";
         dos.writeBytes(data);
         dos.flush();
         ostream.close();
@@ -164,6 +164,13 @@ public class Initialization {
             try {
                 JSONObject pokemon = pokemons.getJSONObject(i);
                 PokemonEntity pokemonEntity = db.pokemonDao().getPokemonById(pokemon.getInt("id"));
+                if (pokemonEntity == null) {
+                    Log.e("PokeAPI", "pokemon not found in database: " + pokemon.getString("name"));
+                    continue;
+                }
+                pokemonEntity.height = pokemon.getInt("height");
+                pokemonEntity.weight = pokemon.getInt("weight");
+                pokemonEntity.capture_rate = pokemon.getJSONObject("pokemon_v2_pokemonspecy").getInt("capture_rate");
                 JSONArray stats = pokemon.getJSONArray("pokemon_v2_pokemonstats");
                 for (int j = 0; j < stats.length(); j++){
                     try {

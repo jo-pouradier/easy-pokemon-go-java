@@ -9,4 +9,8 @@
     <string name="map">Map</string>
     <string name="catchPokemon">Capture!</string>
     <string name="escape">Fuire</string>
+    <string name="type">Type</string>
+    <string name="weight">Weight</string>
+    <string name="name">Nom</string>
+    <string name="captureRate">Taux de capture</string>
 </resources>

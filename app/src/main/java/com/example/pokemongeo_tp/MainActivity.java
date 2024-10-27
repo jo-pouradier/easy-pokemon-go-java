@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
                             // create context
                             Database db = Database.getInstance(binding.getRoot().getContext());
                             PokemonEntity capturedPokemon = db.pokemonDao().getPokemonById(pokeId);
+                            OwnPokemonEntity ownPokemon = new OwnPokemonEntity(capturedPokemon);
+                            db.ownPokemonDao().insert(ownPokemon);
                             // TODO: set own pokemon
                             return null;
                         },
@@ -161,8 +163,13 @@ public class MainActivity extends AppCompatActivity {
 
         // init database
         Initialization.InitPokemon(this);
-        Initialization.InitObject(this);
         Initialization.InitPokemonStats(this);
+        Initialization.InitObject(this);
+
+        // TODO: sometimes the request is not finished before the activity is created
+        //  and create an error with the starter fragment
+        //  wait for the request to be finished before creating the activity
+        //  may need a loading screen
 
         // setup bottom navigation bar
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -201,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("Starter", "in resquest starter " + data);
                         return data;
                     }
-                    return new ArrayList<PokemonEntity>();
+                    return new ArrayList<>();
                 },
                 this
         );
@@ -264,10 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 RequestThread instance = RequestThread.getInstance();
                 instance.addRequest(promise);
             }
-        }
-
-
-        ;
+        };
     }
 
     public void createLocationManager() {
