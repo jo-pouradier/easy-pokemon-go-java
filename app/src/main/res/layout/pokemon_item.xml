@@ -76,7 +76,7 @@
               android:id="@+id/type1_image"
               android:layout_width="40dp"
               android:layout_height="40dp"
-              android:layout_marginStart="12dp"
+              android:layout_marginStart="16dp"
               android:layout_marginEnd="87dp"
               android:src="@{pokemonViewModel.getImage(context, pokemonViewModel.type1Resource)}"
               app:layout_constraintBottom_toTopOf="@id/separator"

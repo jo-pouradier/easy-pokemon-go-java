@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +47,12 @@ public class PokemonListAdapter extends
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Pokemon pokemon = pokemonList.get(position);
+        if (pokemon.getType2() == null) {
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.binding.type1Image.getLayoutParams();
+            params.setMarginEnd(0);
+            params.setMarginStart(0);
+            holder.binding.type1Image.setLayoutParams(params);
+        }
 
         if (pokemon.isDiscovered()) {
             holder.viewModel.setPokemon(pokemon);
