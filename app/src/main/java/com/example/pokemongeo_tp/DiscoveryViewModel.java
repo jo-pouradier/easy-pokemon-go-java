@@ -26,8 +26,8 @@ public class DiscoveryViewModel extends BaseObservable {
     }
 
     @Bindable
-    public int getPokemonType1() {
-        return pokemon.getType1Resource();
+    public String getPokemonType1() {
+        return pokemon.getType1String();
     }
 
     @Bindable
@@ -37,7 +37,7 @@ public class DiscoveryViewModel extends BaseObservable {
 
     @Bindable
     public String getPokemonType2() {
-        return pokemon.getType2().toString();
+        return pokemon.getType2String();
 
     }
 

@@ -6,6 +6,7 @@
             type="com.example.pokemongeo_tp.DiscoveryViewModel"/>
     </data>
     <FrameLayout
+        android:background="#f2f8fb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".DiscoveryFragment">
@@ -18,14 +19,15 @@
             tools:ignore="UselessParent">
 
             <!-- Pokemon Image -->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@{discoveryViewModel.name}"
-                android:src="@{discoveryViewModel.getImage(discoveryViewModel.pokemonImg)}" />
 
             <!-- Pokemon Stats as table-->
+            <ImageView
+                android:layout_width="289dp"
+                android:layout_height="243dp"
+                android:layout_gravity="center"
+                android:contentDescription="@{discoveryViewModel.name}"
+                android:src="@{discoveryViewModel.getImage(context, discoveryViewModel.pokemonImg)}" />
+
             <TableLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,7 +71,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/type" />
+                        android:text="@{@string/type + 1}" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -80,7 +82,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/type" />
+                    android:text="@{@string/type + 2}" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

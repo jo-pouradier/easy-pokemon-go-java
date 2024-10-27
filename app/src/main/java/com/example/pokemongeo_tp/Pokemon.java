@@ -162,6 +162,7 @@ public class Pokemon {
     }
 
     public String getType2String() {
+        if (type2 == null) return "";
         return type2.name();
     }
 
