@@ -1,120 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <variable name="discoveryViewModel"
-            type="com.example.pokemongeo_tp.DiscoveryViewModel"/>
+        <variable
+            name="discoveryViewModel"
+            type="com.example.pokemongeo_tp.DiscoveryViewModel" />
     </data>
-    <FrameLayout
-        android:background="#f2f8fb"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#f2f8fb"
         tools:context=".DiscoveryFragment">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
             tools:ignore="UselessParent">
 
-            <!-- Pokemon Image -->
 
-            <!-- Pokemon Stats as table-->
             <ImageView
-                android:layout_width="289dp"
-                android:layout_height="243dp"
+                android:id="@+id/pokemon_img"
+                android:layout_width="381dp"
+                android:layout_height="319dp"
                 android:layout_gravity="center"
                 android:contentDescription="@{discoveryViewModel.name}"
-                android:src="@{discoveryViewModel.getImage(context, discoveryViewModel.pokemonImg)}" />
+                android:src="@{discoveryViewModel.getImage(context, discoveryViewModel.pokemonImg)}"
+                app:layout_constraintBottom_toTopOf="@+id/pokemon_stats"
+                app:layout_constraintHorizontal_bias="0.585"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TableLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/pokemon_stats"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:gravity="center">
+                android:gravity="fill_horizontal"
+                android:stretchColumns="*"
+                app:layout_constraintBottom_toTopOf="@+id/buttons"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pokemon_img">
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="0dp">
+
                     <TextView
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/name" />
+
                     <TextView
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@{discoveryViewModel.name}" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+
+                    android:layout_width="0dp" >
+
                     <TextView
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/captureRate" />
+
                     <TextView
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@{discoveryViewModel.captureRate}" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="0dp">
+
                     <TextView
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/weight" />
+
                     <TextView
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@{discoveryViewModel.weight}" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="0dp" >
+
                     <TextView
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@{@string/type + 1}" />
+
                     <TextView
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@{discoveryViewModel.pokemonType1}" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="0dp" >
+
                     <TextView
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                    android:text="@{@string/type + 2}" />
+                        android:gravity="center"
+                        android:text="@{@string/type + 2}" />
+
                     <TextView
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@{discoveryViewModel.pokemonType2}" />
                 </TableRow>
             </TableLayout>
 
             <!-- Buttons at the bottom -->
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="fill_horizontal"
+                android:layout_marginBottom="30dp"
                 android:gravity="center_horizontal"
-                android:orientation="horizontal">
-                <!--                android:layout_marginTop="32dp">-->
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <Button
+                    android:id="@+id/flee_button"
                     style="@style/Base.CardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:onClick="@{() -> discoveryViewModel.onEscapeButtonClick()}"
-                    android:text="@string/escape" />
+                    android:text="@string/escape"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/capture_button"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
+                    android:id="@+id/capture_button"
                     style="@style/Base.CardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:onClick="@{() -> discoveryViewModel.onCaptureButtonClick()}"
-                    android:text="@string/catchPokemon" />
-            </LinearLayout>
-        </LinearLayout>
-    </FrameLayout>
+                    android:text="@string/catchPokemon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/flee_button"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

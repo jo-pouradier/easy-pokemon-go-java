@@ -47,6 +47,11 @@ public class DiscoveryViewModel extends BaseObservable {
     }
 
     @Bindable
+    public String getHeight() {
+        return String.valueOf(pokemon.getHeight());
+    }
+
+    @Bindable
     public String getCaptureRate() {
         return String.valueOf(pokemon.getCaptureRate());
     }
