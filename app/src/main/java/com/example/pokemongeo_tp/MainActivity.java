@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.example.pokemongeo_tp.database.Database;
 import com.example.pokemongeo_tp.database.Initialization;
 import com.example.pokemongeo_tp.databinding.ActivityMainBinding;
+import com.example.pokemongeo_tp.entities.OwnPokemonEntity;
 import com.example.pokemongeo_tp.entities.PokemonEntity;
 import com.example.pokemongeo_tp.threading.RequestPromise;
 import com.example.pokemongeo_tp.threading.RequestThread;
@@ -28,12 +29,15 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
+    public OnClickOnPokemonListener selectStarterListener;
     private MapFragment mapfragment;
     private GeoPoint playerLocation;
-    private ActivityMainBinding binding;
     private final LocationListener myLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location newLocation) {
@@ -51,49 +55,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
 
         @Override
-        public void onProviderEnabled(@NonNull String provider) {}
+        public void onProviderEnabled(@NonNull String provider) {
+        }
 
         @Override
-        public void onProviderDisabled(@NonNull String provider) {}
-    };
-    private final NavigationBarView.OnItemSelectedListener navigationBarListener = new NavigationBarView.OnItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment = null;
-
-            if (item.getItemId() == R.id.pokedex) {
-                fragment = new PokedexFragment(); // Replace with your fragment class
-            } else if (item.getItemId() == R.id.home) {
-                fragment = new HomeFragment(); // Replace with your fragment class
-            } else if (item.getItemId() == R.id.inventory) {
-                fragment = new InventoryFragment(); // Replace with your fragment class
-            }
-            else if (item.getItemId() == R.id.map) {
-                if (mapfragment == null) {
-                    mapfragment = new MapFragment();
-                    mapfragment.setOnLocationChanged(myLocationListener);
-                    mapfragment.setOnPokemonDiscoveryListener(pokemonDiscoveryListener);
-                    mapfragment.setLocation(playerLocation);
-                }
-                fragment = mapfragment;
-            }
-
-            if (fragment != null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
-                        .commit();
-                return true;
-            }
-
-            return false;
+        public void onProviderDisabled(@NonNull String provider) {
         }
     };
-
-    public final onPokemonDiscoveryEndListener pokemonDiscoveryEndListener = new onPokemonDiscoveryEndListener(){
+    private ActivityMainBinding binding;
+    public final onPokemonDiscoveryEndListener pokemonDiscoveryEndListener = new onPokemonDiscoveryEndListener() {
         @Override
-        public void onPokemonDiscoveryEnd(Integer pokemonId){
+        public void onPokemonDiscoveryEnd(Integer pokemonId) {
             Log.d("PokemonDiscoveryEnd", "end of discovery, change view");
             if (pokemonId != null) {
 
@@ -117,15 +93,45 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public final onPokemonDiscoveryListener pokemonDiscoveryListener = new onPokemonDiscoveryListener(){
+    public final onPokemonDiscoveryListener pokemonDiscoveryListener = new onPokemonDiscoveryListener() {
         @Override
-        public void onPokemonDiscovery(Pokemon pokemon){
+        public void onPokemonDiscovery(Pokemon pokemon) {
             DiscoveryFragment fragment = new DiscoveryFragment();
             fragment.setPokemon(pokemon);
             fragment.setListener(pokemonDiscoveryEndListener);
             // set fragment in container
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
                     .commit();
+        }
+    };
+    private final NavigationBarView.OnItemSelectedListener navigationBarListener = new NavigationBarView.OnItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment = null;
+
+            if (item.getItemId() == R.id.pokedex) {
+                fragment = new PokedexFragment(); // Replace with your fragment class
+            } else if (item.getItemId() == R.id.home) {
+                fragment = new HomeFragment(); // Replace with your fragment class
+            } else if (item.getItemId() == R.id.inventory) {
+                fragment = new InventoryFragment(); // Replace with your fragment class
+            } else if (item.getItemId() == R.id.map) {
+                if (mapfragment == null) {
+                    mapfragment = new MapFragment();
+                    mapfragment.setOnLocationChanged(myLocationListener);
+                    mapfragment.setOnPokemonDiscoveryListener(pokemonDiscoveryListener);
+                    mapfragment.setLocation(playerLocation);
+                }
+                fragment = mapfragment;
+            }
+
+            if (fragment != null) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
+                        .commit();
+                return true;
+            }
+
+            return false;
         }
     };
 
@@ -161,7 +167,47 @@ public class MainActivity extends AppCompatActivity {
         // setup bottom navigation bar
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
-        binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+        // TODO Check if we have pokemon starter in inventory
+        RequestPromise<Context, List<PokemonEntity>> promise = new RequestPromise<>(
+                new ThreadEventListener<List<PokemonEntity>>() {
+                    @Override
+                    public void OnEventInThread(List<PokemonEntity> data) {
+                        Log.i("Starter", "in activity starter " + data.isEmpty());
+                        if (data.isEmpty()) {
+                            Log.i("Starter", "in activity  starter");
+                            binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+
+                        } else {
+                            StarterFragment fragment = new StarterFragment();
+                            fragment.setPokemonList(data);
+                            Log.i("Starter", data.toString());
+                            Log.i("Starter", "in activity no starter");
+                            fragment.setSelectStarterListener(selectStarterListener);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment) // Replace with your fragment container's ID
+                                    .commit();
+                        }
+                    }
+
+                    @Override
+                    public void OnEventInThreadReject(String error) {
+                        Log.e("ERROR", "while creating pokemon from PokemonEntity. " + error);
+                    }
+                },
+                (Context context) ->
+                {
+                    Database db = Database.getInstance(context);
+                    if (db.ownPokemonDao().getAll().isEmpty()) {
+                        List<PokemonEntity> data = db.pokemonDao().getStarterPokemon();
+                        Log.i("Starter", "in resquest starter " + data);
+                        return data;
+                    }
+                    return new ArrayList<PokemonEntity>();
+                },
+                this
+        );
+        RequestThread instance = RequestThread.getInstance();
+        instance.addRequest(promise);
+//        this.binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
 
         // check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -189,6 +235,39 @@ public class MainActivity extends AppCompatActivity {
             createLocationManager();
         }
 
+        Context context = this.getApplicationContext();
+        selectStarterListener = new OnClickOnPokemonListener() {
+            @Override
+            public void onClickOnPokemon(Pokemon pokemon) {
+                RequestPromise<Context, Void> promise = new RequestPromise<>(
+                        new ThreadEventListener<Void>() {
+                            @Override
+                            public void OnEventInThread(Void data) {
+                                // refresh view
+                                binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                            }
+
+                            @Override
+                            public void OnEventInThreadReject(String error) {
+                                Log.e("ERROR", "while creating pokemon from PokemonEntity. " + error);
+                            }
+                        },
+                        (Context context) -> {
+                            Database db = Database.getInstance(context);
+                            PokemonEntity pokeEntity = db.pokemonDao().getPokemonByName(pokemon.getName());
+                            OwnPokemonEntity pokeOwn = new OwnPokemonEntity(pokeEntity);
+                            db.ownPokemonDao().insert(pokeOwn);
+                            return null;
+                        }, context
+
+                );
+                RequestThread instance = RequestThread.getInstance();
+                instance.addRequest(promise);
+            }
+        }
+
+
+        ;
     }
 
     public void createLocationManager() {
