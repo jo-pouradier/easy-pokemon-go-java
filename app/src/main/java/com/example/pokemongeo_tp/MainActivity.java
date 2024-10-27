@@ -183,8 +183,10 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("Starter", "in activity starter " + data.isEmpty());
                         if (data.isEmpty()) {
                             Log.i("Starter", "in activity  starter");
-                            binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
-                            binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                binding.bottomNavigation.setOnItemSelectedListener(navigationBarListener);
+                                binding.bottomNavigation.setSelectedItemId(R.id.pokedex);
+                            });
 
                         } else {
                             Log.i("Starter", data.toString());
@@ -192,7 +194,9 @@ public class MainActivity extends AppCompatActivity {
                             StarterFragment starterFragment = new StarterFragment();
                             starterFragment.setPokemonList(data);
                             starterFragment.setSelectStarterListener(selectStarterListener);
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, starterFragment).commit();
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, starterFragment).commit();
+                            });
                         }
                     }
 
